@@ -1,0 +1,372 @@
+-- |
+-- Module      :  Sound.HTagLib.Internal
+-- Copyright   :  © 2015 Mark Karpov
+-- License     :  BSD3
+--
+-- Maintainer  :  Mark Karpov <markkarpov@opmbx.org>
+-- Stability   :  experimental
+-- Portability :  portable
+--
+-- Low-level interaction with underlying C API. You don't want to use this,
+-- see "Sound.HTagLib" instead.
+
+{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE ForeignFunctionInterface #-}
+
+module Sound.HTagLib.Internal
+  ( -- * Data types
+    FileType (..)
+  , ID3v2Encoding (..)
+  , FileId
+    -- * File API
+  , newFile
+  , freeFile
+  , saveFile
+    -- * Tag API
+  , getTitle
+  , getArtist
+  , getAlbum
+  , getComment
+  , getGenre
+  , getYear
+  , getTrackNumber
+  , setTitle
+  , setArtist
+  , setAlbum
+  , setComment
+  , setGenre
+  , setYear
+  , setTrackNumber
+    -- * Audio properties API
+  , getDuration
+  , getBitRate
+  , getSampleRate
+  , getChannels )
+where
+
+import Control.Exception
+import Control.Monad (when, unless)
+import Data.Maybe (fromJust)
+import Foreign
+import Foreign.C.String
+import Foreign.C.Types
+import System.IO.Error
+
+import qualified Sound.HTagLib.Type as T
+
+data TagLibFile
+data TagLibTag
+data TagLibProperties
+
+-- | This is an abstraction represented opened file. Other modules can
+-- pass around and treat it like a black box.
+
+newtype FileId = FileId (Ptr TagLibFile)
+
+-- | Types of files TagLib can work with. This may be used to explicitly
+-- specify type of file rather than relying on TagLib guessing (which is
+-- based on extension of file).
+
+data FileType
+  = MPEG
+  | OggVorbis
+  | FLAC
+  | MPC
+  | OggFlac
+  | WavPack
+  | Speex
+  | TrueAudio
+  | MP4
+  | ASF
+    deriving (Show, Eq, Enum)
+
+-- | Encoding for ID3v2 frames that are written to tags.
+
+data ID3v2Encoding
+  = ID3v2Latin1
+  | ID3v2UTF16
+  | ID3v2UTF16BE
+  | ID3v2UTF8
+    deriving (Show, Eq, Enum)
+
+-- Misc
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_set_string_management_enabled"
+  c_taglib_set_string_management_enabled :: CInt -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_free"
+  c_taglib_free :: CString -> IO ()
+
+-- File API
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_file_new"
+  c_taglib_file_new :: CString -> IO (Ptr TagLibFile)
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_file_new_type"
+  c_taglib_file_new_type :: CString -> CInt -> IO (Ptr TagLibFile)
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_file_free"
+  c_taglib_file_free :: Ptr TagLibFile -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_file_is_valid"
+  c_taglib_file_is_valid :: Ptr TagLibFile -> IO CInt
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_file_tag"
+  c_taglib_file_tag :: Ptr TagLibFile -> IO (Ptr TagLibTag)
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_file_audioproperties"
+  c_taglib_file_properties :: Ptr TagLibFile -> IO (Ptr TagLibProperties)
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_file_save"
+  c_taglib_file_save :: Ptr TagLibFile -> IO CInt
+
+-- Tag API
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_title"
+  c_taglib_tag_title :: Ptr TagLibTag -> IO CString
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_artist"
+  c_taglib_tag_artist :: Ptr TagLibTag -> IO CString
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_album"
+  c_taglib_tag_album :: Ptr TagLibTag -> IO CString
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_comment"
+  c_taglib_tag_comment :: Ptr TagLibTag -> IO CString
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_genre"
+  c_taglib_tag_genre :: Ptr TagLibTag -> IO CString
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_year"
+  c_taglib_tag_year :: Ptr TagLibTag -> IO CUInt
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_track"
+  c_taglib_tag_track :: Ptr TagLibTag -> IO CUInt
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_title"
+  c_taglib_tag_set_title :: Ptr TagLibTag -> CString -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_artist"
+  c_taglib_tag_set_artist :: Ptr TagLibTag -> CString -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_album"
+  c_taglib_tag_set_album :: Ptr TagLibTag -> CString -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_comment"
+  c_taglib_tag_set_comment :: Ptr TagLibTag -> CString -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_genre"
+  c_taglib_tag_set_genre :: Ptr TagLibTag -> CString -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_year"
+  c_taglib_tag_set_year :: Ptr TagLibTag -> CUInt -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_track"
+  c_taglib_tag_set_track :: Ptr TagLibTag -> CUInt -> IO ()
+
+-- Audio properties API
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_length"
+  c_taglib_properties_length :: Ptr TagLibProperties -> IO CInt
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_bitrate"
+  c_taglib_properties_bitrate :: Ptr TagLibProperties -> IO CInt
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_samplerate"
+  c_taglib_properties_samplerate :: Ptr TagLibProperties -> IO CInt
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_channels"
+  c_taglib_properties_channels :: Ptr TagLibProperties -> IO CInt
+
+-- Wrappers. Here we prepare a little higher-level interface that will be
+-- used by the rest of the library.
+
+-- File API
+
+-- | Open audio file and return its ID (abstraction that rest of library can
+-- pass around). In case of trouble 'IOException' is thrown.
+
+newFile :: FilePath       -- ^ Path to audio file
+        -> Maybe FileType -- ^ Type of file (or it will be guessed)
+        -> IO FileId      -- ^ Id to pass around
+newFile path ftype = do
+  c_taglib_set_string_management_enabled $ fromBool False
+  ptr <- withCString path $ \cstr ->
+           case ftype of
+             Nothing -> c_taglib_file_new cstr
+             Just t  -> c_taglib_file_new_type cstr (enumToCInt t)
+  when (ptr == nullPtr) $ throwIt doesNotExistErrorType
+  valid <- toBool <$> c_taglib_file_is_valid ptr
+  unless valid $ throwIt illegalOperationErrorType
+  return $ FileId ptr
+  where throwIt t = throwIO $ mkIOError t "Sound.HTagLib.Internal.newFile"
+                      Nothing (Just path)
+
+-- | Free file given its ID. Every time you open a file, free it.
+
+freeFile :: FileId -> IO ()
+freeFile (FileId ptr) = c_taglib_file_free ptr
+
+-- | Save file given its ID.
+
+saveFile :: FileId -> IO ()
+saveFile (FileId ptr) = do
+  code <- c_taglib_file_save ptr
+  unless (code == 0) $ throwIO $ mkIOError illegalOperationErrorType
+    "Sound.HTagLib.Internal.new" Nothing Nothing
+
+-- Tag API
+
+-- | Get title tag associated with file.
+
+getTitle :: FileId -> IO T.Title
+getTitle = fmap T.mkTitle . getStrValue c_taglib_tag_title
+
+-- | Get artist tag associated with file.
+
+getArtist :: FileId -> IO T.Artist
+getArtist = fmap T.mkArtist . getStrValue c_taglib_tag_artist
+
+-- | Get album tag associated with file.
+
+getAlbum :: FileId -> IO T.Album
+getAlbum = fmap T.mkAlbum . getStrValue c_taglib_tag_album
+
+-- | Get comment tag associated with file.
+
+getComment :: FileId -> IO T.Comment
+getComment = fmap T.mkComment . getStrValue c_taglib_tag_comment
+
+-- | Get genre tag associated with file.
+
+getGenre :: FileId -> IO T.Genre
+getGenre = fmap T.mkGenre . getStrValue c_taglib_tag_genre
+
+-- | Get year tag associated with file.
+
+getYear :: FileId -> IO (Maybe T.Year)
+getYear = fmap T.mkYear . getIntValue c_taglib_tag_year
+
+-- | Get track number associated with file.
+
+getTrackNumber :: FileId -> IO (Maybe T.TrackNumber)
+getTrackNumber = fmap T.mkTrackNumber . getIntValue c_taglib_tag_track
+
+-- | Set title of track associated with file.
+
+setTitle :: FileId -> T.Title -> IO ()
+setTitle fid = setStrValue c_taglib_tag_set_title fid . T.getTitle
+
+-- | Set artist of track associated with file.
+
+setArtist :: FileId -> T.Artist -> IO ()
+setArtist fid = setStrValue c_taglib_tag_set_artist fid . T.getArtist
+
+-- | Set album of track associated with file.
+
+setAlbum :: FileId -> T.Album -> IO ()
+setAlbum fid = setStrValue c_taglib_tag_set_album fid . T.getAlbum
+
+-- | Set comment of track associated with file.
+
+setComment :: FileId -> T.Comment -> IO ()
+setComment fid = setStrValue c_taglib_tag_set_comment fid . T.getComment
+
+-- | Set genre of track associated with file.
+
+setGenre :: FileId -> T.Genre -> IO ()
+setGenre fid = setStrValue c_taglib_tag_set_genre fid . T.getGenre
+
+-- | Set year of track associated with file.
+
+setYear :: FileId -> T.Year -> IO ()
+setYear fid = setIntValue c_taglib_tag_set_year fid . T.getYear
+
+-- | Set track number of track associated with file.
+
+setTrackNumber :: FileId -> T.TrackNumber -> IO ()
+setTrackNumber fid = setIntValue c_taglib_tag_set_track fid . T.getTrackNumber
+
+-- Audio properties API
+
+-- | Get duration of track associated with file.
+
+getDuration :: FileId -> IO T.Duration
+getDuration = fmap (fromJust . T.mkDuration)
+            . getIntProperty c_taglib_properties_length
+
+-- | Get bit rate of track associated with file.
+
+getBitRate :: FileId -> IO T.BitRate
+getBitRate = fmap (fromJust . T.mkBitRate)
+           . getIntProperty c_taglib_properties_bitrate
+
+-- | Get sample rate of track associated with file.
+
+getSampleRate :: FileId -> IO T.SampleRate
+getSampleRate = fmap (fromJust . T.mkSampleRate)
+              . getIntProperty c_taglib_properties_samplerate
+
+-- | Get number of channels in track associated with file.
+
+getChannels :: FileId -> IO T.Channels
+getChannels = fmap (fromJust . T.mkChannels)
+            . getIntProperty c_taglib_properties_channels
+
+-- Helpers
+
+getStrValue
+  :: (Ptr TagLibTag -> IO CString) -- ^ How to get string from the resource
+  -> FileId                        -- ^ File ID
+  -> IO String                     -- ^ String result
+getStrValue getStr (FileId ptr) = do
+  tag    <- c_taglib_file_tag ptr
+  cstr   <- getStr tag
+  result <- peekCString cstr
+  c_taglib_free cstr
+  return result
+
+getIntValue
+  :: Integral a
+  => (Ptr TagLibTag -> IO a) -- ^ How to get value from the resource
+  -> FileId                  -- ^ File ID
+  -> IO Int                  -- ^ Result value
+getIntValue getInt (FileId ptr) = do
+  tag  <- c_taglib_file_tag ptr
+  cint <- getInt tag
+  return $ fromIntegral cint
+
+setStrValue
+  :: (Ptr TagLibTag -> CString -> IO ()) -- ^ Setting routine
+  -> FileId                              -- ^ File ID
+  -> String                              -- ^ New string value
+  -> IO ()
+setStrValue setStr (FileId ptr) str = do
+  tag <- c_taglib_file_tag ptr
+  withCString str $ \cstr ->
+    setStr tag cstr
+
+setIntValue
+  :: Integral a
+  => (Ptr TagLibTag -> a -> IO ()) -- ^ Setting routine
+  -> FileId                        -- ^ File ID
+  -> Int                           -- ^ New value
+  -> IO ()
+setIntValue setUInt (FileId ptr) int = do
+  tag <- c_taglib_file_tag ptr
+  setUInt tag $ fromIntegral int
+
+getIntProperty
+  :: Integral a
+  => (Ptr TagLibProperties -> IO a) -- ^ How to get value from the resource
+  -> FileId                         -- ^ File ID
+  -> IO Int                         -- ^ Result
+getIntProperty getInt (FileId ptr) = do
+  properties <- c_taglib_file_properties ptr
+  value      <- getInt properties
+  return $ fromIntegral value
+
+-- | Convert Haskell enumeration to C enumeration (effectively, an integer).
+
+enumToCInt :: Enum a => a -> CInt
+enumToCInt = fromIntegral . fromEnum

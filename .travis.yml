@@ -1,0 +1,51 @@
+env:
+ - CABALVER=1.16 GHCVER=7.6.1
+ - CABALVER=1.16 GHCVER=7.6.2
+ - CABALVER=1.16 GHCVER=7.6.3
+ - CABALVER=1.18 GHCVER=7.8.1
+ - CABALVER=1.18 GHCVER=7.8.2
+ - CABALVER=1.18 GHCVER=7.8.3
+ - CABALVER=1.18 GHCVER=7.8.4
+ - CABALVER=1.22 GHCVER=7.10.1
+ - CABALVER=1.22 ghcver=7.10.2
+ - CABALVER=head GHCVER=head
+
+matrix:
+  allow_failures:
+   - env: CABALVER=1.22 ghcver=7.10.2
+   - env: CABALVER=head GHCVER=head
+
+before_install:
+ - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
+ - travis_retry sudo apt-get update
+ - travis_retry sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
+ - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
+
+install:
+ - cabal --version
+ - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
+ - travis_retry cabal update
+ - cabal install --only-dependencies --enable-tests
+
+script:
+ - case "$CABALVER" in
+    "1.16") cabal configure --enable-tests -v2 ;;
+    "1.18") cabal configure --enable-tests --enable-library-coverage -v2 ;;
+    *)      cabal configure --enable-tests --enable-coverage -v2 ;;
+   esac
+ - cabal build
+ - cabal test --show-details=always
+              --test-option=--threads=2
+              --test-option=--maximum-generated-tests=100
+ - cabal sdist
+ - cabal haddock | grep "100%" | wc -l | grep "3"
+
+after_script:
+ - cabal install hpc-coveralls
+ - export PATH=~/.cabal/bin:$PATH
+ - hpc-coveralls --coverage-mode=StrictlyFullLines
+                 --exclude-dir=tests
+                 tests
+
+notifications:
+  email: false
