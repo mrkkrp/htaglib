@@ -1,5 +1,7 @@
 # HTagLib
 
+*Awaiting its test-suite before going to Hackage/Stackage…*
+
 [![License BSD3](https://img.shields.io/badge/license-BSD3-brightgreen.svg)](http://opensource.org/licenses/BSD-3-Clause)
 [![Hackage](https://img.shields.io/hackage/v/htaglib.svg?style=flat)](https://hackage.haskell.org/package/htaglib)
 [![Build Status](https://travis-ci.org/mrkkrp/htaglib.svg?branch=master)](https://travis-ci.org/mrkkrp/htaglib)
@@ -8,14 +10,14 @@
 * [Quick start](#quick-start)
     * [Reading meta data](#reading-meta-data)
     * [Writing meta data](#writing-meta-data)
+    * [Conclusion](#conclusion)
 * [License](#license)
 
 This is Haskell bindings to [TagLib](https://taglib.github.io/), library for
 reading and editing meta-data of several popular audio formats. This library
-is easy to use and it's modern Haskell: type-safe, high-level, pleasant to
-work with. It's tested and long-term maintained.
+is easy to use and type-safe.
 
-These bindings work with the following formats:
+It works with the following formats:
 
 * MP3
 * FLAC
@@ -114,7 +116,7 @@ main = do
   print track
 ```
 
-For example (alignment is mine):
+For example (alignment is added):
 
 ```
 $ ./example "/home/mark/music/David Bowie/1977, Low/01 Speed of Life.flac"
@@ -150,7 +152,7 @@ that we can set title and artist of audio track like this:
 ```haskell
 main :: IO ()
 main = do
-  (path : title : artist : _)  <- getArgs
+  (path : title : artist : _) <- getArgs
   setTags path Nothing $
     titleSetter (mkTitle title) <>
     artistSetter (mkArtist artist)
@@ -159,7 +161,14 @@ main = do
 ```
 
 This code loads file and changes “title” and “artist” meta data
-fields. Easy!
+fields.
+
+## Conclusion
+
+With the interface provided by `getTags` and `setTags` it's not possible to
+forget to close file or free some resource. You can read all meta data at
+once directly into your data structure in type-safe manner. Writing meta
+data should be trivial too. Have fun!
 
 ## License
 
