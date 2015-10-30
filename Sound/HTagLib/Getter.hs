@@ -11,6 +11,8 @@
 -- don't need to import this module directly, import "Sound.HTagLib"
 -- instead.
 
+{-# LANGUAGE CPP #-}
+
 module Sound.HTagLib.Getter
   ( TagGetter
   , getTags
@@ -31,6 +33,10 @@ where
 
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
+
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative (Applicative, (<$>), (<*>), pure)
+#endif
 
 -- | This type represents composable entity that can be used with 'getTags'
 -- or 'getTags'' functions to read batch of meta parameters.
