@@ -5,6 +5,11 @@
 [![Build Status](https://travis-ci.org/mrkkrp/htaglib.svg?branch=master)](https://travis-ci.org/mrkkrp/htaglib)
 [![Coverage Status](https://coveralls.io/repos/mrkkrp/htaglib/badge.svg?branch=master&service=github)](https://coveralls.io/github/mrkkrp/htaglib?branch=master)
 
+* [Quick start](#quick-start)
+    * [Reading meta data](#reading-meta-data)
+    * [Writing meta data](#writing-meta-data)
+* [License](#license)
+
 This is Haskell bindings to [TagLib](https://taglib.github.io/), library for
 reading and editing meta-data of several popular audio formats. This library
 is easy to use and it's modern Haskell: type-safe, high-level, pleasant to
@@ -23,15 +28,15 @@ These bindings work with the following formats:
 * ASF
 
 This happens in abstract, uniform way, so you don't need to handle any
-low-level details. As a consequence, you currently cannot work with
-format-specific functionality.
+low-level details. As a consequence, it's currently not possible to work
+with format-specific functionality.
 
 ## Quick start
 
 First, since this is bindings to C-interface of the library, you'll need to
 install the library itself. If you're on Unix-like system, chances are
-you'll have it in your official repositories. Users of other systems should
-also be able to install it without particular pain.
+you'll have it in official repositories of your distro. Users of other
+systems should also be able to install it without particular pain.
 
 After installation of the library, install `htaglib` package using Cabal or
 Stack (recommended):
@@ -40,11 +45,19 @@ Stack (recommended):
 $ stack install htaglib
 ```
 
+### Reading meta data
+
 Now to the hacking. It's recommended that you define a record representing
 meta-data of audio track in your program, like this:
 
 ```haskell
+{-# LANGUAGE OverloadedStrings #-}
+
+module Main where
+
+import Data.Monoid
 import Sound.HTagLib
+import System.Environment (getArgs)
 
 data AudioTrack = AudioTrack
   { atTitle   :: Title
@@ -57,23 +70,23 @@ data AudioTrack = AudioTrack
   deriving Show
 ```
 
-A couple of notes here. We use unique types for every component of
-meta-data, so it's more difficult to use track title in lieu of track
-artist, for example. Meta-data that is represented by strings also has smart
+A couple of notes here. We use unique types for every component of meta
+data, so it's more difficult to use track title in lieu of track artist, for
+example. Meta data that is represented by strings also has smart
 constructors, they replace zero bytes with spaces, this is necessary to
-avoid troubles when your Haskell strings go to C-level. Of course, `Title`,
-`Artist`, `Album`, `Comment`, and `Genre` all are instances of `IsString`,
-so just turn on `OverloadedStrings` and you can use normal string literals
-to create data of these types.
+avoid troubles when your Haskell strings go to C-level (well, zero-bytes in
+strings is rather edge case, but it should be mentioned). Of course,
+`Title`, `Artist`, `Album`, `Comment`, and `Genre` all are instances of
+`IsString`, so just turn on `OverloadedStrings` and you can use normal
+string literals to create data of these types.
 
 `Year` and `Track` may be not set or missing, in this case you get
-`Nothing`. To be honest this is possible with string-based fields too, but
-in that case you just get empty strings. `Year` and `Track` have smart
-constructors that make sure that the values are positive (i.e. zero is not
-allowed).
+`Nothing`. This is possible with string-based fields too, but in that case
+you just get empty strings. `Year` and `Track` have smart constructors that
+make sure that the values are positive (i.e. zero is not allowed).
 
 OK, it's time to read some info. There is `TagGetter` type which is an
-applicative functor. You first construct `TagGetter` which will retrive
+applicative functor. You first construct `TagGetter` which will retrieve
 entire `AudioTrack` for you using applicative style:
 
 ```haskell
@@ -98,28 +111,40 @@ main = do
   print track
 ```
 
-For example:
+For example (alignment is mine):
 
 ```
-$ ghc --make example.hs
-
-$ ./example.sh ...
-
-
+$ ./example "/home/mark/music/David Bowie/1977, Low/01 Speed of Life.flac"
+AudioTrack
+  { atTitle   = Title   {getTitle   = "Speed of Life"}
+  , atArtist  = Artist  {getArtist  = "David Bowie"}
+  , atAlbum   = Album   {getAlbum   = "Low"}
+  , atComment = Comment {getComment = ""}
+  , atGenre   = Genre   {getGenre   = ""}
+  , atYear    = Just    (Year {getYear = 1977})
+  , atTrack   = Just    (TrackNumber {getTrackNumber = 1})
+  }
 ```
 
 Success! It's also possible to extract audio properties like sample rate,
 etc. but it's not shown here for simplicity, consult Haddocks for more
 information.
 
+*Note: you need to link your executable against TagLib library. On Unix-like
+ systems just add `-ltag_c` to `ghc-options` field in your `.cabal` file and
+ you're done. Users of other operating systems should be able to handle the
+ problem somehow.*
+
+### Writing meta data
+
 We cannot use applicative interface to set tags. There are several reasons:
 
-* Applicative interface is general in better for extracting or parsing (or
+* Applicative interface in general is better for extracting or parsing (or
   rather assembling complex parsers from more basic ones).
 
 * Some fields like sample rate or length can only be read, not set.
 
-* We may which to set one or two fields selectively, not everything.
+* We may wish to set one or two fields selectively, not everything.
 
 Solution: use monoids. `TagSetter` is an instance of `Monoid`. This means
 that we can set title and artist of audio track like this:
@@ -127,11 +152,16 @@ that we can set title and artist of audio track like this:
 ```haskell
 main :: IO ()
 main = do
-  (path : title : artist : _) <- head <$> getArgs
-  setTags path (titleSetter title <> artistSetter artist)
+  (path : title : artist : _)  <- getArgs
+  setTags path Nothing $
+    titleSetter (mkTitle title) <>
+    artistSetter (mkArtist artist)
   track <- getTags path audioTrackGetter
   print track
 ```
+
+This code loads file and changes “title” and “artist” meta-data
+fields. Easy!
 
 ## License
 
