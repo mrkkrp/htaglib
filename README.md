@@ -45,6 +45,11 @@ Stack (recommended):
 $ stack install htaglib
 ```
 
+*Note: you need to link your executable against TagLib library. On Unix-like
+ systems just add `-ltag_c` to `ghc-options` field in your `.cabal` file and
+ you're done. Users of other operating systems should be able to handle the
+ problem somehow.*
+
 ### Reading meta data
 
 Now to the hacking. It's recommended that you define a record representing
@@ -129,11 +134,6 @@ AudioTrack
 Success! It's also possible to extract audio properties like sample rate,
 etc. but it's not shown here for simplicity, consult Haddocks for more
 information.
-
-*Note: you need to link your executable against TagLib library. On Unix-like
- systems just add `-ltag_c` to `ghc-options` field in your `.cabal` file and
- you're done. Users of other operating systems should be able to handle the
- problem somehow.*
 
 ### Writing meta data
 
