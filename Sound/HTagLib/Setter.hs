@@ -1,5 +1,5 @@
 -- |
--- Module      :  Sound.HTagLib.Getter
+-- Module      :  Sound.HTagLib.Setter
 -- Copyright   :  © 2015 Mark Karpov
 -- License     :  BSD 3 clause
 --
