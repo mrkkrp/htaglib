@@ -63,19 +63,19 @@ module Sound.HTagLib
   , sampleRateGetter
   , channelsGetter
     -- * Setters
-  -- , TagSetter
-  -- , setTags
-  -- , titleSetter
-  -- , artistSetter
-  -- , albumSetter
-  -- , commentSetter
-  -- , genreSetter
-  -- , yearSetter
-  -- , trackNumberSetter
-  )
+  , TagSetter
+  , setTags
+  , setTags'
+  , titleSetter
+  , artistSetter
+  , albumSetter
+  , commentSetter
+  , genreSetter
+  , yearSetter
+  , trackNumberSetter )
 where
 
 import Sound.HTagLib.Getter
 import Sound.HTagLib.Internal (FileType (..), ID3v2Encoding (..))
--- import Sound.HTagLib.Setter
+import Sound.HTagLib.Setter
 import Sound.HTagLib.Type

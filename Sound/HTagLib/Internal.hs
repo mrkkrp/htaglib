@@ -42,7 +42,9 @@ module Sound.HTagLib.Internal
   , getDuration
   , getBitRate
   , getSampleRate
-  , getChannels )
+  , getChannels
+    -- * Special convenience ID3v2 functions
+  , id3v2SetEncoding )
 where
 
 import Control.Exception
@@ -183,6 +185,11 @@ foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_samplerate"
 foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_channels"
   c_taglib_properties_channels :: Ptr TagLibProperties -> IO CInt
 
+-- Special convenience ID3v2 functions
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_id3v2_set_default_text_encoding"
+  c_taglib_id3v2_set_default_text_encoding :: CInt -> IO ()
+
 -- Wrappers. Here we prepare a little higher-level interface that will be
 -- used by the rest of the library.
 
@@ -259,38 +266,38 @@ getTrackNumber = fmap T.mkTrackNumber . getIntValue c_taglib_tag_track
 
 -- | Set title of track associated with file.
 
-setTitle :: FileId -> T.Title -> IO ()
-setTitle fid = setStrValue c_taglib_tag_set_title fid . T.getTitle
+setTitle :: T.Title -> FileId -> IO ()
+setTitle v = setStrValue c_taglib_tag_set_title (T.getTitle v)
 
 -- | Set artist of track associated with file.
 
-setArtist :: FileId -> T.Artist -> IO ()
-setArtist fid = setStrValue c_taglib_tag_set_artist fid . T.getArtist
+setArtist :: T.Artist -> FileId -> IO ()
+setArtist v = setStrValue c_taglib_tag_set_artist (T.getArtist v)
 
 -- | Set album of track associated with file.
 
-setAlbum :: FileId -> T.Album -> IO ()
-setAlbum fid = setStrValue c_taglib_tag_set_album fid . T.getAlbum
+setAlbum :: T.Album -> FileId -> IO ()
+setAlbum v = setStrValue c_taglib_tag_set_album (T.getAlbum v)
 
 -- | Set comment of track associated with file.
 
-setComment :: FileId -> T.Comment -> IO ()
-setComment fid = setStrValue c_taglib_tag_set_comment fid . T.getComment
+setComment :: T.Comment -> FileId -> IO ()
+setComment v = setStrValue c_taglib_tag_set_comment (T.getComment v)
 
 -- | Set genre of track associated with file.
 
-setGenre :: FileId -> T.Genre -> IO ()
-setGenre fid = setStrValue c_taglib_tag_set_genre fid . T.getGenre
+setGenre :: T.Genre -> FileId -> IO ()
+setGenre v = setStrValue c_taglib_tag_set_genre (T.getGenre v)
 
 -- | Set year of track associated with file.
 
-setYear :: FileId -> T.Year -> IO ()
-setYear fid = setIntValue c_taglib_tag_set_year fid . T.getYear
+setYear :: Maybe T.Year -> FileId -> IO ()
+setYear v = setIntValue c_taglib_tag_set_year (T.getYear <$> v)
 
 -- | Set track number of track associated with file.
 
-setTrackNumber :: FileId -> T.TrackNumber -> IO ()
-setTrackNumber fid = setIntValue c_taglib_tag_set_track fid . T.getTrackNumber
+setTrackNumber :: Maybe T.TrackNumber -> FileId -> IO ()
+setTrackNumber v = setIntValue c_taglib_tag_set_track (T.getTrackNumber <$> v)
 
 -- Audio properties API
 
@@ -318,6 +325,13 @@ getChannels :: FileId -> IO T.Channels
 getChannels = fmap (fromJust . T.mkChannels)
             . getIntProperty c_taglib_properties_channels
 
+-- Special convenience ID3v2 functions
+
+-- | Set the default encoding for ID3v2 frames that are written to tags.
+
+id3v2SetEncoding :: ID3v2Encoding -> IO ()
+id3v2SetEncoding = c_taglib_id3v2_set_default_text_encoding . enumToCInt
+
 -- Helpers
 
 getStrValue
@@ -343,10 +357,10 @@ getIntValue getInt (FileId ptr) = do
 
 setStrValue
   :: (Ptr TagLibTag -> CString -> IO ()) -- ^ Setting routine
-  -> FileId                              -- ^ File ID
   -> String                              -- ^ New string value
+  -> FileId                              -- ^ File ID
   -> IO ()
-setStrValue setStr (FileId ptr) str = do
+setStrValue setStr str (FileId ptr) = do
   tag <- c_taglib_file_tag ptr
   withCString str $ \cstr ->
     setStr tag cstr
@@ -354,12 +368,12 @@ setStrValue setStr (FileId ptr) str = do
 setIntValue
   :: Integral a
   => (Ptr TagLibTag -> a -> IO ()) -- ^ Setting routine
+  -> Maybe Int                     -- ^ New value
   -> FileId                        -- ^ File ID
-  -> Int                           -- ^ New value
   -> IO ()
-setIntValue setUInt (FileId ptr) int = do
+setIntValue setUInt int (FileId ptr) = do
   tag <- c_taglib_file_tag ptr
-  setUInt tag $ fromIntegral int
+  setUInt tag $ maybe 0 fromIntegral int
 
 getIntProperty
   :: Integral a
