@@ -1,7 +1,7 @@
 -- |
 -- Module      :  Sound.HTagLib.Internal
 -- Copyright   :  © 2015 Mark Karpov
--- License     :  BSD3
+-- License     :  BSD 3 clause
 --
 -- Maintainer  :  Mark Karpov <markkarpov@opmbx.org>
 -- Stability   :  experimental
@@ -10,6 +10,7 @@
 -- Low-level interaction with underlying C API. You don't want to use this,
 -- see "Sound.HTagLib" instead.
 
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE EmptyDataDecls #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 
@@ -54,6 +55,10 @@ import System.IO.Error
 
 import qualified Sound.HTagLib.Type as T
 
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative ((<$>))
+#endif
+
 data TagLibFile
 data TagLibTag
 data TagLibProperties
@@ -64,8 +69,8 @@ data TagLibProperties
 newtype FileId = FileId (Ptr TagLibFile)
 
 -- | Types of files TagLib can work with. This may be used to explicitly
--- specify type of file rather than relying on TagLib guessing (which is
--- based on extension of file).
+-- specify type of file rather than relying on TagLib ability to guess type
+-- of file from its extension.
 
 data FileType
   = MPEG
@@ -366,7 +371,7 @@ getIntProperty getInt (FileId ptr) = do
   value      <- getInt properties
   return $ fromIntegral value
 
--- | Convert Haskell enumeration to C enumeration (effectively, an integer).
+-- | Convert Haskell enumeration to C enumeration (an integer).
 
 enumToCInt :: Enum a => a -> CInt
 enumToCInt = fromIntegral . fromEnum

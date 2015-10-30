@@ -1,7 +1,7 @@
 -- |
 -- Module      :  Sound.HTagLib
 -- Copyright   :  © 2015 Mark Karpov
--- License     :  BSD3
+-- License     :  BSD 3 clause
 --
 -- Maintainer  :  Mark Karpov <markkarpov@opmbx.org>
 -- Stability   :  experimental

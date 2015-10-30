@@ -2,7 +2,7 @@
 --
 -- Cabal config for HTagLib.
 --
--- Copyright © 2015 HTagLib
+-- Copyright © 2015 Mark Karpov
 --
 -- Redistribution and use in source and binary forms, with or without
 -- modification, are permitted provided that the following conditions are
@@ -15,8 +15,8 @@
 --   notice, this list of conditions and the following disclaimer in the
 --   documentation and/or other materials provided with the distribution.
 --
--- * Neither the names of the authors nor the names of contributors may be
---   used to endorse or promote products derived from this software without
+-- * Neither the name Mark Karpov nor the names of contributors may be used
+--   to endorse or promote products derived from this software without
 --   specific prior written permission.
 --
 -- This software is provided by the copyright holders “as is” and any
@@ -48,7 +48,6 @@ extra-source-files:  CHANGELOG.md
 
 library
   build-depends:     base >= 4.6 && < 5
-  -- default-extensions:
   exposed-modules:   Sound.HTagLib
                    , Sound.HTagLib.Type
                    , Sound.HTagLib.Getter

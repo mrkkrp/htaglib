@@ -1,7 +1,7 @@
 -- |
 -- Module      :  Sound.HTagLib.Getter
 -- Copyright   :  © 2015 Mark Karpov
--- License     :  BSD3
+-- License     :  BSD 3 clause
 --
 -- Maintainer  :  Mark Karpov <markkarpov@opmbx.org>
 -- Stability   :  experimental
@@ -48,7 +48,7 @@ instance Applicative TagGetter where
 
 -- | @getTags path g@ will try to read file located at @path@ and read meta
 -- data of the file using getter @g@. Type of file will be guessed from its
--- extension. If this is no satisfactory and you want to explicitly specify
+-- extension. If this is not satisfactory and you want to explicitly specify
 -- file type, see 'getTags'' variation of this function.
 --
 -- If the file cannot be found at @path@ or user has no permission to read
@@ -63,12 +63,18 @@ getTags path = execGetter path Nothing
 -- choose file type (see 'I.FileType').
 
 getTags' :: FilePath    -- ^ Path to audio file
-         -> I.FileType  -- ^ Type of
+         -> I.FileType  -- ^ Type of audio file
          -> TagGetter a -- ^ Getter
-         -> IO a
+         -> IO a        -- ^ Extracted data
 getTags' path t = execGetter path (Just t)
 
-execGetter :: FilePath -> Maybe I.FileType -> TagGetter a -> IO a
+-- | This is the most general way to read meta data from file. 'getTags' and
+-- 'getTags'' are just wrappers around the function.
+
+execGetter :: FilePath         -- ^ Path to audio file
+           -> Maybe I.FileType -- ^ Type of audio file (if known)
+           -> TagGetter a      -- ^ Getter
+           -> IO a             -- ^ Extracted data
 execGetter path t g = do
   fid <- I.newFile path t
   x   <- runGetter g fid
@@ -106,7 +112,8 @@ genreGetter = TagGetter I.getGenre
 yearGetter :: TagGetter (Maybe Year)
 yearGetter = TagGetter I.getYear
 
--- | Getter to retrieve track number.
+-- | Getter to retrieve track number (returns 'Nothing' if the data is
+-- missing).
 
 trackNumberGetter :: TagGetter (Maybe TrackNumber)
 trackNumberGetter = TagGetter I.getTrackNumber
