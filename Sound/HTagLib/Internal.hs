@@ -223,9 +223,9 @@ freeFile (FileId ptr) = c_taglib_file_free ptr
 
 saveFile :: FileId -> IO ()
 saveFile (FileId ptr) = do
-  code <- c_taglib_file_save ptr
-  unless (code == 0) $ throwIO $ mkIOError illegalOperationErrorType
-    "Sound.HTagLib.Internal.new" Nothing Nothing
+  success <- toBool <$> c_taglib_file_save ptr
+  unless success $ throwIO $ mkIOError illegalOperationErrorType
+    "Sound.HTagLib.Internal.saveFile" Nothing Nothing
 
 -- Tag API
 
