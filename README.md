@@ -56,9 +56,7 @@ Now to the hacking. It's recommended that you define a record representing
 meta-data of audio track in your program, like this:
 
 ```haskell
-{-# LANGUAGE OverloadedStrings #-}
-
-module Main where
+module Main (main) where
 
 import Data.Monoid
 import Sound.HTagLib
@@ -85,10 +83,10 @@ strings is rather edge case, but it should be mentioned). Of course,
 `IsString`, so just turn on `OverloadedStrings` and you can use normal
 string literals to create data of these types.
 
-`Year` and `Track` may be not set or missing, in this case you get
+`Year` and `TrackNumber` may be not set or missing, in this case you get
 `Nothing`. This is possible with string-based fields too, but in that case
-you just get empty strings. `Year` and `Track` have smart constructors that
-make sure that the values are positive (i.e. zero is not allowed).
+you just get empty strings. `Year` and `TrackNumber` have smart constructors
+that make sure that the values are positive (i.e. zero is not allowed).
 
 OK, it's time to read some info. There is `TagGetter` type which is an
 applicative functor. You first construct `TagGetter` which will retrieve
@@ -160,7 +158,7 @@ main = do
   print track
 ```
 
-This code loads file and changes “title” and “artist” meta-data
+This code loads file and changes “title” and “artist” meta data
 fields. Easy!
 
 ## License
