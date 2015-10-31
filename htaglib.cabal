@@ -48,6 +48,7 @@ extra-source-files:  CHANGELOG.md
 
 library
   build-depends:     base >= 4.6 && < 5
+  extra-libraries:   tag_c
   exposed-modules:   Sound.HTagLib
                    , Sound.HTagLib.Type
                    , Sound.HTagLib.Getter
