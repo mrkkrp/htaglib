@@ -72,14 +72,12 @@ execSetter :: FilePath               -- ^ Path to audio file
            -> Maybe I.FileType       -- ^ Type of audio file (if known)
            -> TagSetter              -- ^ Setter
            -> IO ()
-execSetter path enc t s = do
-  fid <- I.newFile path t
+execSetter path enc t s = I.withFile path t $ \fid -> do
   case enc of
     Nothing -> return ()
     Just e  -> I.id3v2SetEncoding e
   runSetter s fid
   I.saveFile fid
-  I.freeFile fid
 
 -- | Setter for track title.
 

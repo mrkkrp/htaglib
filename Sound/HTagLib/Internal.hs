@@ -20,8 +20,7 @@ module Sound.HTagLib.Internal
   , ID3v2Encoding (..)
   , FileId
     -- * File API
-  , newFile
-  , freeFile
+  , withFile
   , saveFile
     -- * Tag API
   , getTitle
@@ -218,6 +217,15 @@ newFile path ftype = do
 
 freeFile :: FileId -> IO ()
 freeFile (FileId ptr) = c_taglib_file_free ptr
+
+-- | Open audio file located at specified path, execute some actions given
+-- its 'FileId' and then free the file.
+
+withFile :: FilePath         -- ^ Path to audio file
+         -> Maybe FileType   -- ^ Type of file (or it will be guessed)
+         -> (FileId -> IO a) -- ^ Computation depending of 'FileId'
+         -> IO a             -- ^ Result value
+withFile path t = bracket (newFile path t) freeFile
 
 -- | Save file given its ID.
 

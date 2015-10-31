@@ -81,11 +81,7 @@ execGetter :: FilePath         -- ^ Path to audio file
            -> Maybe I.FileType -- ^ Type of audio file (if known)
            -> TagGetter a      -- ^ Getter
            -> IO a             -- ^ Extracted data
-execGetter path t g = do
-  fid <- I.newFile path t
-  x   <- runGetter g fid
-  I.freeFile fid
-  return x
+execGetter path t = I.withFile path t . runGetter
 
 -- | Getter to retrieve track title.
 
