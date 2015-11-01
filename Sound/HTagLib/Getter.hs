@@ -57,8 +57,7 @@ instance Applicative TagGetter where
 -- extension. If this is not satisfactory and you want to explicitly specify
 -- file type, see 'getTags'' variation of this function.
 --
--- If the file cannot be found at @path@ or user has no permission to read
--- it 'IOException' will be thrown.
+-- In case of trouble 'I.HTagLibException' will be thrown.
 
 getTags :: FilePath    -- ^ Path to audio file
         -> TagGetter a -- ^ Getter

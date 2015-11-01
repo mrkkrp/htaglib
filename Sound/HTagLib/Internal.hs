@@ -10,15 +10,17 @@
 -- Low-level interaction with underlying C API. You don't want to use this,
 -- see "Sound.HTagLib" instead.
 
-{-# LANGUAGE CPP #-}
-{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE CPP                      #-}
+{-# LANGUAGE DeriveDataTypeable       #-}
+{-# LANGUAGE EmptyDataDecls           #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 
 module Sound.HTagLib.Internal
   ( -- * Data types
-    FileType (..)
+    FileId
+  , FileType (..)
   , ID3v2Encoding (..)
-  , FileId
+  , HTagLibException (..)
     -- * File API
   , withFile
   , saveFile
@@ -49,10 +51,10 @@ where
 import Control.Exception
 import Control.Monad (when, unless)
 import Data.Maybe (fromJust)
+import Data.Typeable (Typeable)
 import Foreign
 import Foreign.C.String
 import Foreign.C.Types
-import System.IO.Error
 
 import qualified Sound.HTagLib.Type as T
 
@@ -64,8 +66,8 @@ data TagLibFile
 data TagLibTag
 data TagLibProperties
 
--- | This is an abstraction represented opened file. Other modules can
--- pass around and treat it like a black box.
+-- | This is an abstraction representing opened file. Other modules can
+-- pass it around and treat it like a black box.
 
 newtype FileId = FileId (Ptr TagLibFile)
 
@@ -94,6 +96,23 @@ data ID3v2Encoding
   | ID3v2UTF16BE
   | ID3v2UTF8
     deriving (Show, Eq, Enum)
+
+-- | The data type represents exceptions specific to the library. The
+-- following constructors are defined:
+--
+--     * @OpeningFailed@ means that attempt to open audio file to read its
+--     tags failed.
+--     * @InvalidFile@ means that file can be opened, but it doesn't contain
+--     any information that can be interpreted by the library.
+--     * @SavingFailed@ is thrown when well… saving failed.
+
+data HTagLibException
+  = OpeningFailed FilePath
+  | InvalidFile   FilePath
+  | SavingFailed  FilePath
+    deriving (Eq, Show, Typeable)
+
+instance Exception HTagLibException
 
 -- Misc
 
@@ -206,12 +225,10 @@ newFile path ftype = do
            case ftype of
              Nothing -> c_taglib_file_new cstr
              Just t  -> c_taglib_file_new_type cstr (enumToCInt t)
-  when (ptr == nullPtr) $ throwIt doesNotExistErrorType
+  when (ptr == nullPtr) $ throw (OpeningFailed path)
   valid <- toBool <$> c_taglib_file_is_valid ptr
-  unless valid $ throwIt illegalOperationErrorType
+  unless valid $ throw (InvalidFile path)
   return $ FileId ptr
-  where throwIt t = throwIO $ mkIOError t "Sound.HTagLib.Internal.newFile"
-                      Nothing (Just path)
 
 -- | Free file given its ID. Every time you open a file, free it.
 
@@ -227,13 +244,16 @@ withFile :: FilePath         -- ^ Path to audio file
          -> IO a             -- ^ Result value
 withFile path t = bracket (newFile path t) freeFile
 
--- | Save file given its ID.
+-- | Save file given its ID. Given 'FilePath' just tells what to put into
+-- exception if the action fails, it doesn't specify where to save the file
+-- (it's determined by 'FileId').
 
-saveFile :: FileId -> IO ()
-saveFile (FileId ptr) = do
+saveFile :: FilePath -- ^ File name to use in exceptions
+         -> FileId   -- ^ File identifier
+         -> IO ()
+saveFile path (FileId ptr) = do
   success <- toBool <$> c_taglib_file_save ptr
-  unless success $ throwIO $ mkIOError illegalOperationErrorType
-    "Sound.HTagLib.Internal.saveFile" Nothing Nothing
+  unless success $ throw (SavingFailed path)
 
 -- Tag API
 

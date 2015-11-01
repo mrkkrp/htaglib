@@ -45,8 +45,7 @@ instance Monoid TagSetter where
 
 -- | Set tags in specified file using given setter.
 --
--- If the file cannot be found at @path@ or user has no permission to read
--- it 'IOException' will be thrown.
+-- In case of trouble 'I.HTagLibException' will be thrown.
 
 setTags :: FilePath              -- ^ Path to audio file
         -> Maybe I.ID3v2Encoding -- ^ Encoding for ID3v2 frames
@@ -77,7 +76,7 @@ execSetter path enc t s = I.withFile path t $ \fid -> do
     Nothing -> return ()
     Just e  -> I.id3v2SetEncoding e
   runSetter s fid
-  I.saveFile fid
+  I.saveFile path fid
 
 -- | Setter for track title.
 

@@ -47,6 +47,7 @@ module Sound.HTagLib
   , getChannels
   , FileType (..)
   , ID3v2Encoding (..)
+  , HTagLibException (..)
     -- * Getters
   , TagGetter
   , getTags
@@ -76,6 +77,9 @@ module Sound.HTagLib
 where
 
 import Sound.HTagLib.Getter
-import Sound.HTagLib.Internal (FileType (..), ID3v2Encoding (..))
+import Sound.HTagLib.Internal
+  ( FileType (..)
+  , ID3v2Encoding (..)
+  , HTagLibException (..) )
 import Sound.HTagLib.Setter
 import Sound.HTagLib.Type
