@@ -166,11 +166,11 @@ newtype BitRate = BitRate
     getBitRate :: Int }
   deriving (Show, Eq, Ord)
 
--- | Construction of 'BitRate' values, non-positive values result in
+-- | Construction of 'BitRate' values, negative values result in
 -- 'Nothing'.
 
 mkBitRate :: Int -> Maybe BitRate
-mkBitRate = fmap BitRate . atLeast 1
+mkBitRate = fmap BitRate . atLeast 0
 
 -- | Sample rate in Hz.
 
