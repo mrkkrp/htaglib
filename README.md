@@ -7,6 +7,7 @@
 [![Build Status](https://travis-ci.org/mrkkrp/htaglib.svg?branch=master)](https://travis-ci.org/mrkkrp/htaglib)
 [![Coverage Status](https://coveralls.io/repos/mrkkrp/htaglib/badge.svg?branch=master&service=github)](https://coveralls.io/github/mrkkrp/htaglib?branch=master)
 
+* [Alternatives](#alternatives)
 * [Quick start](#quick-start)
     * [Reading meta data](#reading-meta-data)
     * [Writing meta data](#writing-meta-data)
@@ -32,6 +33,17 @@ It works with the following formats:
 This happens in abstract, uniform way, so you don't need to handle any
 low-level details. As a consequence, it's currently not possible to work
 with format-specific functionality.
+
+## Alternatives
+
+There is at least two Haskell bindings doing “the same” thing:
+
+* [`libtagc`](https://hackage.haskell.org/package/libtagc)
+* [`taglib`](https://hackage.haskell.org/package/taglib)
+
+Both are very low level, without any protection or higher-level
+abstractions, not really type-safe. I personally don't want to use them, so
+I wrote this.
 
 ## Quick start
 
