@@ -34,7 +34,6 @@
 module Getter (tests) where
 
 import Test.Framework
-import Test.Framework.Providers.HUnit (testCase)
 import Test.HUnit hiding (Test, path)
 
 import Sound.HTagLib

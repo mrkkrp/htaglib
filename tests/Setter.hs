@@ -33,7 +33,7 @@
 
 module Setter (tests) where
 
-import Data.Monoid ((<>))
+import Data.Monoid
 import System.Directory (getTemporaryDirectory, copyFile)
 import System.FilePath ((</>), takeFileName)
 
@@ -45,7 +45,6 @@ import Util
 
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<$>))
-import Data.Monoid
 #endif
 
 tests :: Test
@@ -61,6 +60,7 @@ dupeFile path = do
 
 sampleSetter :: TagSetter
 sampleSetter =
+  mempty <>
   titleSetter (mkTitle "title'") <>
   artistSetter (mkArtist "artist'") <>
   albumSetter (mkAlbum "album'") <>
