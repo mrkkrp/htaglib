@@ -119,9 +119,6 @@ instance Exception HTagLibException
 foreign import ccall unsafe "taglib/tag_c.h taglib_set_string_management_enabled"
   c_taglib_set_string_management_enabled :: CInt -> IO ()
 
-foreign import ccall unsafe "taglib/tag_c.h taglib_free"
-  c_taglib_free :: CString -> IO ()
-
 -- File API
 
 foreign import ccall unsafe "taglib/tag_c.h taglib_file_new"
@@ -370,7 +367,7 @@ getStrValue getStr (FileId ptr) = do
   tag    <- c_taglib_file_tag ptr
   cstr   <- getStr tag
   result <- peekCString cstr
-  c_taglib_free cstr
+  free cstr
   return result
 
 getIntValue
