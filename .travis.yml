@@ -36,8 +36,6 @@ script:
    esac
  - cabal build
  - cabal test --show-details=always
-              --test-option=--threads=2
-              --test-option=--maximum-generated-tests=100
  - cabal sdist
  - cabal haddock | grep "100%" | wc -l | grep "5"
 
