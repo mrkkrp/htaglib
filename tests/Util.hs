@@ -98,7 +98,9 @@ sampleTags path = AudioTags
   , atChannels    = fromJust $ mkChannels 2 }
 
 fileList :: [(String, FileType)]
-fileList = [ ("audio-samples/sample.flac", FLAC) ]
+fileList =
+  [ ("audio-samples/sample.flac", FLAC)
+  , ("audio-samples/sample.mp3",  MPEG) ]
 
 caseWithFile :: Show a => (a -> Assertion) -> a -> Test
 caseWithFile f param = testCase ("checking file: " ++ show param) (f param)
