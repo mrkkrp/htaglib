@@ -32,7 +32,7 @@
 -- POSSIBILITY OF SUCH DAMAGE.
 
 name:                htaglib
-version:             0.1.0
+version:             0.1.1
 cabal-version:       >= 1.10
 license:             BSD3
 license-file:        LICENSE.md
@@ -45,6 +45,9 @@ synopsis:            Bindings to TagLib, audio meta-data library
 build-type:          Simple
 description:         Bindings to TagLib, audio meta-data library.
 extra-source-files:  CHANGELOG.md
+                   , audio-samples/README.md
+                   , audio-samples/sample.flac
+                   , audio-samples/sample.mp3
 
 library
   build-depends:     base >= 4.6 && < 5
@@ -69,7 +72,7 @@ test-suite tests
                    , HUnit                >= 1.2 && < 1.4
                    , directory            >= 1.2
                    , filepath             >= 1.4 && < 2
-                   , htaglib              >= 0.1.0
+                   , htaglib              >= 0.1.1
                    , test-framework       >= 0.6 && < 1
                    , test-framework-hunit >= 0.2 && < 0.4
   default-extensions:
