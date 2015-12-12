@@ -57,7 +57,7 @@ library
                    , Sound.HTagLib.Type
                    , Sound.HTagLib.Getter
                    , Sound.HTagLib.Setter
-                   , Sound.HTagLib.Internal
+  other-modules:     Sound.HTagLib.Internal
   ghc-options:       -O2 -Wall
   default-language:  Haskell2010
 
