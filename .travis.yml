@@ -1,26 +1,27 @@
-env:
- - CABALVER=1.16 GHCVER=7.6.1
- - CABALVER=1.16 GHCVER=7.6.2
- - CABALVER=1.16 GHCVER=7.6.3
- - CABALVER=1.18 GHCVER=7.8.1
- - CABALVER=1.18 GHCVER=7.8.2
- - CABALVER=1.18 GHCVER=7.8.3
- - CABALVER=1.18 GHCVER=7.8.4
- - CABALVER=1.22 GHCVER=7.10.1
- - CABALVER=1.22 ghcver=7.10.2
- - CABALVER=head GHCVER=head
+language: c
+
+sudo: false
 
 matrix:
+  include:
+    - env: CABALVER=1.16 GHCVER=7.6.3
+      addons: {apt: {packages: [cabal-install-1.16,ghc-7.6.3,libtagc0-dev], sources: [hvr-ghc]}}
+    - env: CABALVER=1.18 GHCVER=7.8.4
+      addons: {apt: {packages: [cabal-install-1.18,ghc-7.8.4,libtagc0-dev], sources: [hvr-ghc]}}
+    - env: CABALVER=1.22 GHCVER=7.10.1
+      addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.1,libtagc0-dev],sources: [hvr-ghc]}}
+    - env: CABALVER=1.22 GHCVER=7.10.2
+      addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.2,libtagc0-dev],sources: [hvr-ghc]}}
+    - env: CABALVER=1.22 GHCVER=7.10.3
+      addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.3,libtagc0-dev],sources: [hvr-ghc]}}
+    - env: CABALVER=head GHCVER=head
+      addons: {apt: {packages: [cabal-install-head,ghc-head,libtagc0-dev],  sources: [hvr-ghc]}}
+
   allow_failures:
-   - env: CABALVER=1.22 ghcver=7.10.2
-   - env: CABALVER=head GHCVER=head
+    - env: CABALVER=head GHCVER=head
 
 before_install:
- - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
- - travis_retry sudo apt-get update
- - travis_retry sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
- - travis_retry sudo apt-get install libtagc0-dev
- - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
+  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
 
 install:
  - cabal --version
