@@ -40,7 +40,7 @@ import Sound.HTagLib
 import Util
 
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative (Applicative, (<$>))
+import Control.Applicative ((<$>))
 #endif
 
 tests :: Test
