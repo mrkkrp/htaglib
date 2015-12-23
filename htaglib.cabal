@@ -51,7 +51,7 @@ extra-source-files:  CHANGELOG.md
                    , audio-samples/sample.mp3
 
 flag dev
-  description:       Turn development settings.
+  description:       Turn on development settings.
   manual:            True
   default:           False
 
