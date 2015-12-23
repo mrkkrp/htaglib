@@ -127,19 +127,25 @@ For example (alignment is added):
 ```
 $ ./example "/home/mark/music/David Bowie/1977, Low/01 Speed of Life.flac"
 AudioTrack
-  { atTitle   = Title   {getTitle   = "Speed of Life"}
-  , atArtist  = Artist  {getArtist  = "David Bowie"}
-  , atAlbum   = Album   {getAlbum   = "Low"}
-  , atComment = Comment {getComment = ""}
-  , atGenre   = Genre   {getGenre   = ""}
-  , atYear    = Just    (Year {getYear = 1977})
-  , atTrack   = Just    (TrackNumber {getTrackNumber = 1})
+  { atTitle   = Title   {unTitle   = "Speed of Life"}
+  , atArtist  = Artist  {unArtist  = "David Bowie"}
+  , atAlbum   = Album   {unAlbum   = "Low"}
+  , atComment = Comment {unComment = ""}
+  , atGenre   = Genre   {unGenre   = ""}
+  , atYear    = Just    (Year {unYear = 1977})
+  , atTrack   = Just    (TrackNumber {unTrackNumber = 1})
   }
 ```
 
 Success! It's also possible to extract audio properties like sample rate,
 etc. but it's not shown here for simplicity, consult Haddocks for more
 information.
+
+N.B. If you need to extract duration of tracks, TagLib only returns number
+of seconds as an integer. This means that if you want to calculate total
+duration, you'll have slightly incorrect result. Proper solution is to
+extract duration as floating-point number, for that we recommend bindings to
+`libsndfile` — [`hsndfile`](https://hackage.haskell.org/package/hsndfile).
 
 ### Writing meta data
 
