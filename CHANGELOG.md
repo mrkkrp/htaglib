@@ -1,4 +1,4 @@
-## HTagLib 0.1.2
+## HTagLib 1.0.0
 
 * Make the module `Sound.HTagLib.Internal` hidden for end users.
 
