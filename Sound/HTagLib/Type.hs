@@ -9,6 +9,8 @@
 --
 -- Definitions of types used to represent various tags and audio properties.
 
+{-# LANGUAGE DeriveDataTypeable #-}
+
 module Sound.HTagLib.Type
   ( Title
   , mkTitle
@@ -42,10 +44,15 @@ module Sound.HTagLib.Type
   , getSampleRate
   , Channels
   , mkChannels
-  , getChannels )
+  , getChannels
+  , FileType (..)
+  , ID3v2Encoding (..)
+  , HTagLibException (..) )
 where
 
+import Control.Exception (Exception)
 import Data.String
+import Data.Typeable (Typeable)
 
 -- | Title tag.
 
@@ -208,3 +215,43 @@ avoidNulls = let f x = if x == '\0' then ' ' else x in fmap f
 
 atLeast :: Int -> Int -> Maybe Int
 atLeast a b = if b >= a then Just b else Nothing
+
+-- | Types of files TagLib can work with. This may be used to explicitly
+-- specify type of file rather than relying on TagLib ability to guess type
+-- of file from its extension.
+
+data FileType
+  = MPEG               -- ^ MPEG
+  | OggVorbis          -- ^ Ogg vorbis
+  | FLAC               -- ^ FLAC
+  | MPC                -- ^ MPC
+  | OggFlac            -- ^ Ogg FLAC
+  | WavPack            -- ^ Wav pack
+  | Speex              -- ^ Speex
+  | TrueAudio          -- ^ True audio
+  | MP4                -- ^ MP4
+  | ASF                -- ^ ASF
+    deriving (Show, Eq, Enum)
+
+-- | Encoding for ID3v2 frames that are written to tags.
+
+data ID3v2Encoding
+  = ID3v2Latin1        -- ^ Latin1
+  | ID3v2UTF16         -- ^ UTF-16
+  | ID3v2UTF16BE       -- ^ UTF-16 big endian
+  | ID3v2UTF8          -- ^ UTF-8
+    deriving (Show, Eq, Enum)
+
+-- | The data type represents exceptions specific to the library.
+
+data HTagLibException
+  = OpeningFailed FilePath
+    -- ^ Attempt to open audio file to read its tags failed
+  | InvalidFile FilePath
+    -- ^ File can be opened, but it doesn't contain any information that can
+    -- be interpreted by the library
+  | SavingFailed FilePath
+    -- ^ Saving failed
+    deriving (Eq, Show, Typeable)
+
+instance Exception HTagLibException

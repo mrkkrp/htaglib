@@ -14,7 +14,8 @@
 {-# LANGUAGE CPP #-}
 
 module Sound.HTagLib.Getter
-  ( TagGetter
+  ( -- * High-level API
+    TagGetter
   , getTags
   , getTags'
     -- * Built-in getters
@@ -49,8 +50,8 @@ instance Functor TagGetter where
 instance Applicative TagGetter where
   pure    = TagGetter . const . return
   x <*> y = TagGetter $ \fid ->
-              do f <- runGetter x fid
-                 f <$> runGetter y fid
+    do f <- runGetter x fid
+       f <$> runGetter y fid
 
 -- | @getTags path g@ will try to read file located at @path@ and read meta
 -- data of the file using getter @g@. Type of file will be guessed from its
@@ -59,27 +60,30 @@ instance Applicative TagGetter where
 --
 -- In case of trouble 'I.HTagLibException' will be thrown.
 
-getTags :: FilePath    -- ^ Path to audio file
-        -> TagGetter a -- ^ Getter
-        -> IO a        -- ^ Extracted data
+getTags
+  :: FilePath          -- ^ Path to audio file
+  -> TagGetter a       -- ^ Getter
+  -> IO a              -- ^ Extracted data
 getTags path = execGetter path Nothing
 
 -- | This is essentially the same as 'getTags', but allows to explicitly
 -- choose file type (see 'I.FileType').
 
-getTags' :: FilePath    -- ^ Path to audio file
-         -> I.FileType  -- ^ Type of audio file
-         -> TagGetter a -- ^ Getter
-         -> IO a        -- ^ Extracted data
+getTags'
+  :: FilePath          -- ^ Path to audio file
+  -> FileType          -- ^ Type of audio file
+  -> TagGetter a       -- ^ Getter
+  -> IO a              -- ^ Extracted data
 getTags' path t = execGetter path (Just t)
 
 -- | This is the most general way to read meta data from file. 'getTags' and
 -- 'getTags'' are just wrappers around the function.
 
-execGetter :: FilePath         -- ^ Path to audio file
-           -> Maybe I.FileType -- ^ Type of audio file (if known)
-           -> TagGetter a      -- ^ Getter
-           -> IO a             -- ^ Extracted data
+execGetter
+  :: FilePath         -- ^ Path to audio file
+  -> Maybe FileType   -- ^ Type of audio file (if known)
+  -> TagGetter a      -- ^ Getter
+  -> IO a             -- ^ Extracted data
 execGetter path t = I.withFile path t . runGetter
 
 -- | Getter to retrieve track title.

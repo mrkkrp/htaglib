@@ -13,9 +13,11 @@
 {-# LANGUAGE CPP #-}
 
 module Sound.HTagLib.Setter
-  ( TagSetter
+  ( -- * High-level API
+    TagSetter
   , setTags
   , setTags'
+    -- * Built-in setters
   , titleSetter
   , artistSetter
   , albumSetter
@@ -25,6 +27,7 @@ module Sound.HTagLib.Setter
   , trackNumberSetter )
 where
 
+import Data.Foldable (forM_)
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
 
@@ -40,41 +43,42 @@ newtype TagSetter = TagSetter { runSetter :: I.FileId -> IO () }
 instance Monoid TagSetter where
   mempty  = TagSetter $ const (return ())
   x `mappend` y = TagSetter $ \fid ->
-                    do runSetter x fid
-                       runSetter y fid
+    do runSetter x fid
+       runSetter y fid
 
 -- | Set tags in specified file using given setter.
 --
 -- In case of trouble 'I.HTagLibException' will be thrown.
 
-setTags :: FilePath              -- ^ Path to audio file
-        -> Maybe I.ID3v2Encoding -- ^ Encoding for ID3v2 frames
-        -> TagSetter             -- ^ Setter
-        -> IO ()
+setTags
+  :: FilePath          -- ^ Path to audio file
+  -> Maybe ID3v2Encoding -- ^ Encoding for ID3v2 frames
+  -> TagSetter         -- ^ Setter
+  -> IO ()
 setTags path enc = execSetter path enc Nothing
 
 -- | Similar to 'setTags', but you can also specify type of audio file
 -- explicitly (otherwise it's guessed from file extension).
 
-setTags' :: FilePath              -- ^ Path to audio file
-         -> Maybe I.ID3v2Encoding -- ^ Encoding for ID3v2 frames
-         -> I.FileType            -- ^ Type of audio file
-         -> TagSetter             -- ^ Setter
-         -> IO ()
+setTags'
+  :: FilePath          -- ^ Path to audio file
+  -> Maybe ID3v2Encoding -- ^ Encoding for ID3v2 frames
+  -> FileType          -- ^ Type of audio file
+  -> TagSetter         -- ^ Setter
+  -> IO ()
 setTags' path enc t = execSetter path enc (Just t)
 
 -- | The most general way to set meta data. 'setTags' and 'setTags'' are
 -- just wrappers around this function.
 
-execSetter :: FilePath               -- ^ Path to audio file
-           -> Maybe I.ID3v2Encoding  -- ^ Encoding for ID3v2 frames
-           -> Maybe I.FileType       -- ^ Type of audio file (if known)
-           -> TagSetter              -- ^ Setter
-           -> IO ()
+execSetter
+  :: FilePath          -- ^ Path to audio file
+  -> Maybe ID3v2Encoding -- ^ Encoding for ID3v2 frames
+  -> Maybe FileType    -- ^ Type of audio file (if known)
+  -> TagSetter         -- ^ Setter
+  -> IO ()
 execSetter path enc t s = I.withFile path t $ \fid -> do
-  case enc of
-    Nothing -> return ()
-    Just e  -> I.id3v2SetEncoding e
+  forM_ enc I.id3v2SetEncoding
   runSetter s fid
   I.saveFile path fid
 
