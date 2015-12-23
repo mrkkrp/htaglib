@@ -10,41 +10,42 @@
 -- Definitions of types used to represent various tags and audio properties.
 
 {-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE OverloadedStrings  #-}
 
 module Sound.HTagLib.Type
   ( Title
   , mkTitle
-  , getTitle
+  , unTitle
   , Artist
   , mkArtist
-  , getArtist
+  , unArtist
   , Album
   , mkAlbum
-  , getAlbum
+  , unAlbum
   , Comment
   , mkComment
-  , getComment
+  , unComment
   , Genre
   , mkGenre
-  , getGenre
+  , unGenre
   , Year
   , mkYear
-  , getYear
+  , unYear
   , TrackNumber
   , mkTrackNumber
-  , getTrackNumber
+  , unTrackNumber
   , Duration
   , mkDuration
-  , getDuration
+  , unDuration
   , BitRate
   , mkBitRate
-  , getBitRate
+  , unBitRate
   , SampleRate
   , mkSampleRate
-  , getSampleRate
+  , unSampleRate
   , Channels
   , mkChannels
-  , getChannels
+  , unChannels
   , FileType (..)
   , ID3v2Encoding (..)
   , HTagLibException (..) )
@@ -52,89 +53,85 @@ where
 
 import Control.Exception (Exception)
 import Data.String
+import Data.Text (Text)
 import Data.Typeable (Typeable)
+import qualified Data.Text as T
 
 -- | Title tag.
 
 newtype Title = Title
-  { -- | Convert 'Title' to 'String'.
-    getTitle :: String }
-  deriving (Show, Eq, Ord)
+  { unTitle :: Text    -- ^ Convert 'Title' to 'Text'.
+  } deriving (Show, Eq, Ord)
 
 instance IsString Title where
-  fromString = mkTitle
+  fromString = mkTitle . fromString
 
 -- | Construction of 'Title' type, null bytes are converted to spaces.
 
-mkTitle :: String -> Title
+mkTitle :: Text -> Title
 mkTitle = Title . avoidNulls
 
 -- | Artist tag.
 
 newtype Artist = Artist
-  { -- | Convert 'Artist' to 'String'.
-    getArtist :: String }
-  deriving (Show, Eq, Ord)
+  { unArtist :: Text   -- ^ Convert 'Artist' to 'Text'.
+  } deriving (Show, Eq, Ord)
 
 instance IsString Artist where
-  fromString = mkArtist
+  fromString = mkArtist . fromString
 
 -- | Construction of 'Artist' type, null bytes are converted to spaces.
 
-mkArtist :: String -> Artist
+mkArtist :: Text -> Artist
 mkArtist = Artist . avoidNulls
 
 -- | Album tag.
 
 newtype Album = Album
-  { -- | Convert 'Album' to 'String'.
-    getAlbum :: String }
-  deriving (Show, Eq, Ord)
+  { unAlbum :: Text    -- ^ Convert 'Album' to 'Text'.
+  } deriving (Show, Eq, Ord)
 
 instance IsString Album where
-  fromString = mkAlbum
+  fromString = mkAlbum . fromString
 
 -- | Construction of 'Album' type, null bytes are converted to spaces.
 
-mkAlbum :: String -> Album
+mkAlbum :: Text -> Album
 mkAlbum = Album . avoidNulls
 
 -- | Comment tag.
 
 newtype Comment = Comment
-  { -- | Convert 'Comment' to 'String'.
-    getComment :: String }
-  deriving (Show, Eq, Ord)
+  { unComment :: Text  -- ^ Convert 'Comment' to 'Text'.
+  } deriving (Show, Eq, Ord)
 
 instance IsString Comment where
-  fromString = mkComment
+  fromString = mkComment . fromString
 
 -- | Construction of 'Comment' type, null bytes are converted to spaces.
 
-mkComment :: String -> Comment
+mkComment :: Text -> Comment
 mkComment = Comment . avoidNulls
 
 -- | Genre tag.
 
 newtype Genre = Genre
-  { -- | Convert 'Genre' to 'String'.
-    getGenre :: String }
-  deriving (Show, Eq, Ord)
+  { unGenre :: Text    -- ^ Convert 'Genre' to 'Text'.
+  } deriving (Show, Eq, Ord)
 
 instance IsString Genre where
-  fromString = mkGenre
+  fromString = mkGenre . fromString
 
 -- | Construction of 'Genre' type, null bytes are converted to spaces.
 
-mkGenre :: String -> Genre
+mkGenre :: Text -> Genre
 mkGenre = Genre . avoidNulls
 
 -- | Year tag.
 
 newtype Year = Year
-  { -- | Convert 'Year' to 'Int'.
-    getYear :: Int }
-  deriving (Show, Eq, Ord)
+  { unYear :: Int      -- ^ Convert 'Year' to 'Int'.
+  } deriving (Show, Eq, Ord)
 
 -- | Construction of 'Year' type, non-positive values result in 'Nothing'.
 
@@ -144,9 +141,8 @@ mkYear = fmap Year . atLeast 1
 -- | Track number tag.
 
 newtype TrackNumber = TrackNumber
-  { -- | Convert 'TrackNumber' to 'Int'.
-    getTrackNumber :: Int }
-  deriving (Show, Eq, Ord)
+  { unTrackNumber :: Int -- ^ Convert 'TrackNumber' to 'Int'.
+  } deriving (Show, Eq, Ord)
 
 -- | Construction of 'TrackNumber' type, non-positive values result in
 -- 'Nothing'.
@@ -157,9 +153,8 @@ mkTrackNumber = fmap TrackNumber . atLeast 1
 -- | Duration in seconds.
 
 newtype Duration = Duration
-  { -- | Convert 'Duration' to 'Int'.
-    getDuration :: Int }
-  deriving (Show, Eq, Ord)
+  { unDuration :: Int  -- ^ Convert 'Duration' to 'Int'.
+  } deriving (Show, Eq, Ord)
 
 -- | Construction of 'Duration' values, negative values result in 'Nothing'.
 
@@ -169,9 +164,8 @@ mkDuration = fmap Duration . atLeast 0
 -- | Bit rate in kb/s.
 
 newtype BitRate = BitRate
-  { -- | Convert 'BitRate' to 'Int'.
-    getBitRate :: Int }
-  deriving (Show, Eq, Ord)
+  { unBitRate :: Int   -- ^ Convert 'BitRate' to 'Int'.
+  } deriving (Show, Eq, Ord)
 
 -- | Construction of 'BitRate' values, negative values result in
 -- 'Nothing'.
@@ -182,9 +176,8 @@ mkBitRate = fmap BitRate . atLeast 0
 -- | Sample rate in Hz.
 
 newtype SampleRate = SampleRate
-  { -- | Convert 'SampleRate' to 'Int'.
-    getSampleRate :: Int }
-  deriving (Show, Eq, Ord)
+  { unSampleRate :: Int -- ^ Convert 'SampleRate' to 'Int'.
+  } deriving (Show, Eq, Ord)
 
 -- | Construction of 'SampleRate' values, non-positive values result in
 -- 'Nothing'.
@@ -195,9 +188,8 @@ mkSampleRate = fmap SampleRate . atLeast 1
 -- | Number of channels in the audio stream.
 
 newtype Channels = Channels
-  { -- | Convert 'Channels' to 'Int'.
-    getChannels :: Int }
-  deriving (Show, Eq, Ord)
+  { unChannels :: Int  -- ^ Convert 'Channels' to 'Int'.
+  } deriving (Show, Eq, Ord)
 
 -- | Construction of 'Channels' values, non-positive values result in
 -- 'Nothing'.
@@ -207,8 +199,8 @@ mkChannels = fmap Channels . atLeast 1
 
 -- | Replace null bytes with spaces.
 
-avoidNulls :: String -> String
-avoidNulls = let f x = if x == '\0' then ' ' else x in fmap f
+avoidNulls :: Text -> Text
+avoidNulls = T.replace "\0" " "
 
 -- | @atLeast a b@ returns @Just b@ is @b@ is greater or equal to @a@,
 -- otherwise result is @Nothing@.

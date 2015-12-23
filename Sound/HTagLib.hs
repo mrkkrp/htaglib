@@ -14,37 +14,37 @@ module Sound.HTagLib
   ( -- * Data types
     Title
   , mkTitle
-  , getTitle
+  , unTitle
   , Artist
   , mkArtist
-  , getArtist
+  , unArtist
   , Album
   , mkAlbum
-  , getAlbum
+  , unAlbum
   , Comment
   , mkComment
-  , getComment
+  , unComment
   , Genre
   , mkGenre
-  , getGenre
+  , unGenre
   , Year
   , mkYear
-  , getYear
+  , unYear
   , TrackNumber
   , mkTrackNumber
-  , getTrackNumber
+  , unTrackNumber
   , Duration
   , mkDuration
-  , getDuration
+  , unDuration
   , BitRate
   , mkBitRate
-  , getBitRate
+  , unBitRate
   , SampleRate
   , mkSampleRate
-  , getSampleRate
+  , unSampleRate
   , Channels
   , mkChannels
-  , getChannels
+  , unChannels
   , FileType (..)
   , ID3v2Encoding (..)
   , HTagLibException (..)

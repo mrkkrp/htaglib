@@ -51,7 +51,9 @@ extra-source-files:  CHANGELOG.md
                    , audio-samples/sample.mp3
 
 library
-  build-depends:     base >= 4.6 && < 5
+  build-depends:     base       >= 4.6 && < 5
+                   , bytestring >= 0.9
+                   , text       >= 1.0
   extra-libraries:   tag_c
   exposed-modules:   Sound.HTagLib
                    , Sound.HTagLib.Type

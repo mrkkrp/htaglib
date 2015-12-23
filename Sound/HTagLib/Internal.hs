@@ -46,11 +46,13 @@ where
 
 import Control.Exception (throw, bracket)
 import Control.Monad (when, unless)
+import Data.ByteString (packCString, useAsCString)
 import Data.Maybe (fromJust)
+import Data.Text (Text)
+import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import Foreign
 import Foreign.C.String
 import Foreign.C.Types
-
 import qualified Sound.HTagLib.Type as T
 
 #if !MIN_VERSION_base(4,8,0)
@@ -250,37 +252,37 @@ getTrackNumber = fmap T.mkTrackNumber . getIntValue c_taglib_tag_track
 -- | Set title of track associated with file.
 
 setTitle :: T.Title -> FileId -> IO ()
-setTitle v = setStrValue c_taglib_tag_set_title (T.getTitle v)
+setTitle v = setStrValue c_taglib_tag_set_title (T.unTitle v)
 
 -- | Set artist of track associated with file.
 
 setArtist :: T.Artist -> FileId -> IO ()
-setArtist v = setStrValue c_taglib_tag_set_artist (T.getArtist v)
+setArtist v = setStrValue c_taglib_tag_set_artist (T.unArtist v)
 
 -- | Set album of track associated with file.
 
 setAlbum :: T.Album -> FileId -> IO ()
-setAlbum v = setStrValue c_taglib_tag_set_album (T.getAlbum v)
+setAlbum v = setStrValue c_taglib_tag_set_album (T.unAlbum v)
 
 -- | Set comment of track associated with file.
 
 setComment :: T.Comment -> FileId -> IO ()
-setComment v = setStrValue c_taglib_tag_set_comment (T.getComment v)
+setComment v = setStrValue c_taglib_tag_set_comment (T.unComment v)
 
 -- | Set genre of track associated with file.
 
 setGenre :: T.Genre -> FileId -> IO ()
-setGenre v = setStrValue c_taglib_tag_set_genre (T.getGenre v)
+setGenre v = setStrValue c_taglib_tag_set_genre (T.unGenre v)
 
 -- | Set year of track associated with file.
 
 setYear :: Maybe T.Year -> FileId -> IO ()
-setYear v = setIntValue c_taglib_tag_set_year (T.getYear <$> v)
+setYear v = setIntValue c_taglib_tag_set_year (T.unYear <$> v)
 
 -- | Set track number of track associated with file.
 
 setTrackNumber :: Maybe T.TrackNumber -> FileId -> IO ()
-setTrackNumber v = setIntValue c_taglib_tag_set_track (T.getTrackNumber <$> v)
+setTrackNumber v = setIntValue c_taglib_tag_set_track (T.unTrackNumber <$> v)
 
 -- Audio properties API
 
@@ -320,13 +322,13 @@ id3v2SetEncoding = c_taglib_id3v2_set_default_text_encoding . enumToCInt
 getStrValue
   :: (Ptr TagLibTag -> IO CString) -- ^ How to get string from the resource
   -> FileId            -- ^ File ID
-  -> IO String         -- ^ String result
+  -> IO Text           -- ^ String result
 getStrValue getStr (FileId ptr) = do
   tag    <- c_taglib_file_tag ptr
   cstr   <- getStr tag
-  result <- peekCString cstr
+  result <- packCString cstr
   free cstr
-  return result
+  return (decodeUtf8 result)
 
 getIntValue :: Integral a
   => (Ptr TagLibTag -> IO a) -- ^ How to get value from the resource
@@ -339,12 +341,12 @@ getIntValue getInt (FileId ptr) = do
 
 setStrValue
   :: (Ptr TagLibTag -> CString -> IO ()) -- ^ Setting routine
-  -> String            -- ^ New string value
+  -> Text              -- ^ New string value
   -> FileId            -- ^ File ID
   -> IO ()
 setStrValue setStr str (FileId ptr) = do
   tag <- c_taglib_file_tag ptr
-  withCString str $ \cstr ->
+  useAsCString (encodeUtf8 str) $ \cstr ->
     setStr tag cstr
 
 setIntValue :: Integral a
