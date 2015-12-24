@@ -86,7 +86,7 @@ test-suite tests
                    , HUnit                >= 1.2 && < 1.4
                    , directory            >= 1.2
                    , filepath             >= 1.4 && < 2
-                   , htaglib              >= 0.1.1
+                   , htaglib              >= 1.0
                    , test-framework       >= 0.6 && < 1
                    , test-framework-hunit >= 0.2 && < 0.4
   default-extensions:
@@ -95,4 +95,4 @@ test-suite tests
 
 source-repository head
   type:              git
-  location:          https://github.com/mrkkrp/htaglib
+  location:          https://github.com/mrkkrp/htaglib.git
