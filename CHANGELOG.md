@@ -1,3 +1,10 @@
+## HTagLib 1.0.1
+
+* Rewritten setters (without changing the API), so at most one writing
+  operation is performed for every settable value. When combining setters
+  that happen to set the same tags to different values, value on the left
+  side of `mappend` wins.
+
 ## HTagLib 1.0.0
 
 * Make the module `Sound.HTagLib.Internal` hidden for end users.

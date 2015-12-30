@@ -10,7 +10,8 @@
 -- High-level interface for writing audio meta data. You don't need to
 -- import this module directly, import "Sound.HTagLib" instead.
 
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE CPP             #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Sound.HTagLib.Setter
   ( -- * High-level API
@@ -27,6 +28,7 @@ module Sound.HTagLib.Setter
   , trackNumberSetter )
 where
 
+import Control.Applicative ((<|>))
 import Data.Foldable (forM_)
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
@@ -37,14 +39,39 @@ import Data.Monoid
 
 -- | Composable entity that can be used together with 'setTags' or
 -- 'setTags'' to write meta data to audio file.
+--
+-- Note that in case of (for example):
+--
+-- > titleSetter "foo" <> titleSetter "bar"
+--
+-- The first value wins.
 
-newtype TagSetter = TagSetter { runSetter :: I.FileId -> IO () }
+data TagSetter = TagSetter
+  { sdTitle       :: Maybe Title
+  , sdArtist      :: Maybe Artist
+  , sdAlbum       :: Maybe Album
+  , sdComment     :: Maybe Comment
+  , sdGenre       :: Maybe Genre
+  , sdYear        :: Maybe (Maybe Year)
+  , sdTrackNumber :: Maybe (Maybe TrackNumber) }
 
 instance Monoid TagSetter where
-  mempty  = TagSetter $ const (return ())
-  x `mappend` y = TagSetter $ \fid ->
-    do runSetter x fid
-       runSetter y fid
+  mempty = TagSetter
+    { sdTitle       = Nothing
+    , sdArtist      = Nothing
+    , sdAlbum       = Nothing
+    , sdComment     = Nothing
+    , sdGenre       = Nothing
+    , sdYear        = Nothing
+    , sdTrackNumber = Nothing }
+  mappend x y = let f g = g x <|> g y in TagSetter
+    { sdTitle       = f sdTitle
+    , sdArtist      = f sdArtist
+    , sdAlbum       = f sdAlbum
+    , sdComment     = f sdComment
+    , sdGenre       = f sdGenre
+    , sdYear        = f sdYear
+    , sdTrackNumber = f sdTrackNumber }
 
 -- | Set tags in specified file using given setter.
 --
@@ -77,42 +104,49 @@ execSetter
   -> Maybe FileType    -- ^ Type of audio file (if known)
   -> TagSetter         -- ^ Setter
   -> IO ()
-execSetter path enc t s = I.withFile path t $ \fid -> do
+execSetter path enc t TagSetter {..} = I.withFile path t $ \fid -> do
   forM_ enc I.id3v2SetEncoding
-  runSetter s fid
+  let writeTag x f = forM_ x (`f` fid)
+  writeTag sdTitle       I.setTitle
+  writeTag sdArtist      I.setArtist
+  writeTag sdAlbum       I.setAlbum
+  writeTag sdComment     I.setComment
+  writeTag sdGenre       I.setGenre
+  writeTag sdYear        I.setYear
+  writeTag sdTrackNumber I.setTrackNumber
   I.saveFile path fid
 
 -- | Setter for track title.
 
 titleSetter :: Title -> TagSetter
-titleSetter = TagSetter . I.setTitle
+titleSetter x = mempty { sdTitle = Just x }
 
 -- | Setter for track artist.
 
 artistSetter :: Artist -> TagSetter
-artistSetter = TagSetter . I.setArtist
+artistSetter x = mempty { sdArtist = Just x }
 
 -- | Setter for track album.
 
 albumSetter :: Album -> TagSetter
-albumSetter = TagSetter . I.setAlbum
+albumSetter x = mempty { sdAlbum = Just x }
 
 -- | Setter for track comment.
 
 commentSetter :: Comment -> TagSetter
-commentSetter = TagSetter . I.setComment
+commentSetter x = mempty { sdComment = Just x }
 
 -- | Setter for track genre.
 
 genreSetter :: Genre -> TagSetter
-genreSetter = TagSetter . I.setGenre
+genreSetter x = mempty { sdGenre = Just x }
 
 -- | Setter for year tag, use 'Nothing' to clear the field.
 
 yearSetter :: Maybe Year -> TagSetter
-yearSetter = TagSetter . I.setYear
+yearSetter x = mempty { sdYear = Just x }
 
 -- | Setter for track number, use 'Nothing' to clear the field.
 
 trackNumberSetter :: Maybe TrackNumber -> TagSetter
-trackNumberSetter = TagSetter . I.setTrackNumber
+trackNumberSetter x = mempty { sdTrackNumber = Just x }
