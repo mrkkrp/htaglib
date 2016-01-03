@@ -1,6 +1,6 @@
 -- |
 -- Module      :  Sound.HTagLib.Setter
--- Copyright   :  © 2015 Mark Karpov
+-- Copyright   :  © 2015–2016 Mark Karpov
 -- License     :  BSD 3 clause
 --
 -- Maintainer  :  Mark Karpov <markkarpov@opmbx.org>
