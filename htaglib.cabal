@@ -32,7 +32,7 @@
 -- POSSIBILITY OF SUCH DAMAGE.
 
 name:                htaglib
-version:             1.0.0
+version:             1.0.1
 cabal-version:       >= 1.10
 license:             BSD3
 license-file:        LICENSE.md
