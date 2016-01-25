@@ -1,4 +1,3 @@
--- -*- Mode: Haskell; -*-
 --
 -- HTagLib tests, main module.
 --
