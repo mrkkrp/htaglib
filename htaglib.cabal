@@ -39,7 +39,7 @@ author:              Mark Karpov <markkarpov@opmbx.org>
 maintainer:          Mark Karpov <markkarpov@opmbx.org>
 homepage:            https://github.com/mrkkrp/htaglib
 bug-reports:         https://github.com/mrkkrp/htaglib/issues
-category:            Sound
+category:            Sound, Foreign
 synopsis:            Bindings to TagLib, audio meta-data library
 build-type:          Simple
 description:         Bindings to TagLib, audio meta-data library.
