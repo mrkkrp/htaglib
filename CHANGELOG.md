@@ -1,3 +1,7 @@
+## HTagLib 1.0.2
+
+* Modify test suite so it passes with newer versions of TagLib as well.
+
 ## HTagLib 1.0.1
 
 * Rewritten setters (without changing the API), so at most one writing
