@@ -34,7 +34,6 @@
 
 module Setter (tests) where
 
-import Data.Monoid
 import System.Directory (getTemporaryDirectory, copyFile)
 import System.FilePath ((</>), takeFileName)
 
@@ -50,8 +49,8 @@ import Control.Applicative ((<$>))
 
 tests :: Test
 tests = testGroup "Setters" $
-        fmap (caseWithFile simpleSetter . fst) fileList ++
-        fmap (caseWithFile specializedGetter) fileList
+  fmap (caseWithFile (const simpleSetter)) fileList ++
+  fmap (caseWithFile specializedGetter)    fileList
 
 dupeFile :: FilePath -> IO FilePath
 dupeFile path = do
@@ -59,37 +58,28 @@ dupeFile path = do
   copyFile path newPath
   return newPath
 
-sampleSetter :: TagSetter
-sampleSetter =
-  mempty <>
-  titleSetter (mkTitle "title'") <>
-  artistSetter (mkArtist "artist'") <>
-  albumSetter (mkAlbum "album'") <>
-  commentSetter (mkComment "comment'") <>
-  genreSetter (mkGenre "genre'") <>
-  yearSetter (mkYear 2056) <>
-  trackNumberSetter (mkTrackNumber 8)
-
 updateSampleTags :: AudioTags -> AudioTags
 updateSampleTags tags = tags
-  { atTitle = mkTitle "title'"
-  , atArtist = mkArtist "artist'"
-  , atAlbum = mkAlbum "album'"
-  , atComment = mkComment "comment'"
-  , atGenre = mkGenre "genre'"
-  , atYear = mkYear 2056
+  { atTitle       = mkTitle "title'"
+  , atArtist      = mkArtist "artist'"
+  , atAlbum       = mkAlbum "album'"
+  , atComment     = mkComment "comment'"
+  , atGenre       = mkGenre "genre'"
+  , atYear        = mkYear 2056
   , atTrackNumber = mkTrackNumber 8 }
 
-simpleSetter :: FilePath -> Assertion
-simpleSetter path = do
+simpleSetter :: AudioTags -> Assertion
+simpleSetter tags = do
+  let path = atFileName tags
   dupe <- dupeFile path
-  setTags dupe Nothing $ sampleSetter
-  tags <- getTags dupe (sampleGetter dupe)
-  tags @?= updateSampleTags (sampleTags dupe)
+  setTags dupe Nothing sampleSetter
+  extracted <- getTags dupe (sampleGetter dupe)
+  extracted `cfbr` updateSampleTags (tags { atFileName = dupe })
 
-specializedGetter :: (FilePath, FileType) -> Assertion
-specializedGetter (path, t) = do
+specializedGetter :: FileType -> AudioTags -> Assertion
+specializedGetter t tags = do
+  let path = atFileName tags
   dupe <- dupeFile path
-  setTags' dupe Nothing t $ sampleSetter
-  tags <- getTags dupe (sampleGetter dupe)
-  tags @?= updateSampleTags (sampleTags dupe)
+  setTags' dupe Nothing t sampleSetter
+  extracted <- getTags dupe (sampleGetter dupe)
+  extracted `cfbr` updateSampleTags (tags { atFileName = dupe })

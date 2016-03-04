@@ -35,12 +35,14 @@
 module Util
   ( AudioTags (..)
   , sampleGetter
-  , sampleTags
+  , sampleSetter
   , fileList
-  , caseWithFile )
+  , caseWithFile
+  , cfbr )
 where
 
 import Data.Maybe (fromJust)
+import Data.Monoid
 import Sound.HTagLib
 
 import Test.Framework
@@ -81,9 +83,20 @@ sampleGetter path = AudioTags
   <*> sampleRateGetter
   <*> channelsGetter
 
-sampleTags :: FilePath -> AudioTags
-sampleTags path = AudioTags
-  { atFileName    = path
+sampleSetter :: TagSetter
+sampleSetter =
+  mempty <>
+  titleSetter (mkTitle "title'") <>
+  artistSetter (mkArtist "artist'") <>
+  albumSetter (mkAlbum "album'") <>
+  commentSetter (mkComment "comment'") <>
+  genreSetter (mkGenre "genre'") <>
+  yearSetter (mkYear 2056) <>
+  trackNumberSetter (mkTrackNumber 8)
+
+sampleTags :: AudioTags
+sampleTags = AudioTags
+  { atFileName    = undefined
   , atTitle       = "title"
   , atArtist      = "artist"
   , atAlbum       = "album"
@@ -96,10 +109,33 @@ sampleTags path = AudioTags
   , atSampleRate  = fromJust $ mkSampleRate 44100
   , atChannels    = fromJust $ mkChannels 2 }
 
-fileList :: [(String, FileType)]
+fileList :: [(FileType, AudioTags)]
 fileList =
-  [ ("audio-samples/sample.flac", FLAC)
-  , ("audio-samples/sample.mp3",  MPEG) ]
+  [ (FLAC, sampleTags
+     { atBitRate = fromJust $ mkBitRate 217
+     , atFileName = "audio-samples/sample.flac" })
+  , (MPEG, sampleTags
+     { atBitRate = fromJust $ mkBitRate 136
+     , atFileName = "audio-samples/sample.mp3"  }) ]
 
-caseWithFile :: Show a => (a -> Assertion) -> a -> Test
-caseWithFile f param = testCase ("checking file: " ++ show param) (f param)
+caseWithFile
+  :: (FileType -> AudioTags -> Assertion)
+  -> (FileType, AudioTags)
+  -> Test
+caseWithFile f (t, tags) = testCase name (f t tags)
+  where name = "using file: " ++ show (atFileName tags) ++ " (" ++ show t ++ ")"
+
+-- | Create 'Assertion' that two collections of tags match. However, if bit
+-- rate of the first is zero (which is the case with older versions of
+-- TagLib when it's used with such short files as our samples), allow bit
+-- rate values differ.
+
+cfbr
+  :: AudioTags         -- ^ Tags to test
+  -> AudioTags         -- ^ Correct tags to test against
+  -> Assertion
+cfbr n tags =
+  let zeroBitRate = fromJust (mkBitRate 0)
+  in if atBitRate n == zeroBitRate
+       then n @?= tags { atBitRate = zeroBitRate }
+       else n @?= tags

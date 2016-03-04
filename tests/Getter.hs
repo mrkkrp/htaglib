@@ -44,15 +44,17 @@ import Control.Applicative ((<$>))
 
 tests :: Test
 tests = testGroup "Getters" $
-        fmap (caseWithFile simpleGetter . fst) fileList ++
-        fmap (caseWithFile specializedGetter) fileList
+  fmap (caseWithFile (const simpleGetter)) fileList ++
+  fmap (caseWithFile specializedGetter)    fileList
 
-simpleGetter :: FilePath -> Assertion
-simpleGetter path = do
-  tags <- getTags path (id <$> sampleGetter path)
-  tags @?= sampleTags path
+simpleGetter :: AudioTags -> Assertion
+simpleGetter tags = do
+  let path = atFileName tags
+  extracted <- getTags path (id <$> sampleGetter path)
+  extracted `cfbr` tags
 
-specializedGetter :: (FilePath, FileType) -> Assertion
-specializedGetter (path, t) = do
-  tags <- getTags' path t (id <$> sampleGetter path)
-  tags @?= sampleTags path
+specializedGetter :: FileType -> AudioTags -> Assertion
+specializedGetter t tags = do
+  let path = atFileName tags
+  extracted <- getTags' path t (id <$> sampleGetter path)
+  extracted `cfbr` tags
