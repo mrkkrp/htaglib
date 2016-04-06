@@ -1,3 +1,9 @@
+## HTagLib 1.0.3
+
+* Export functions instead of record selectors for tag newtype wrappers.
+  This is to prevent changes (using record syntax) to values created with
+  smart constructors.
+
 ## HTagLib 1.0.2
 
 * Modify test suite so it passes with newer versions of TagLib as well.

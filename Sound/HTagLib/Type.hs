@@ -59,9 +59,7 @@ import qualified Data.Text as T
 
 -- | Title tag.
 
-newtype Title = Title
-  { unTitle :: Text    -- ^ Convert 'Title' to 'Text'.
-  } deriving (Show, Eq, Ord)
+newtype Title = Title Text deriving (Show, Eq, Ord)
 
 instance IsString Title where
   fromString = mkTitle . fromString
@@ -71,11 +69,14 @@ instance IsString Title where
 mkTitle :: Text -> Title
 mkTitle = Title . avoidNulls
 
+-- | Convert 'Title' to 'Text'.
+
+unTitle :: Title -> Text
+unTitle (Title x) = x
+
 -- | Artist tag.
 
-newtype Artist = Artist
-  { unArtist :: Text   -- ^ Convert 'Artist' to 'Text'.
-  } deriving (Show, Eq, Ord)
+newtype Artist = Artist Text deriving (Show, Eq, Ord)
 
 instance IsString Artist where
   fromString = mkArtist . fromString
@@ -85,11 +86,14 @@ instance IsString Artist where
 mkArtist :: Text -> Artist
 mkArtist = Artist . avoidNulls
 
+-- | Convert 'Artist' to 'Text'.
+
+unArtist :: Artist -> Text
+unArtist (Artist x) = x
+
 -- | Album tag.
 
-newtype Album = Album
-  { unAlbum :: Text    -- ^ Convert 'Album' to 'Text'.
-  } deriving (Show, Eq, Ord)
+newtype Album = Album Text deriving (Show, Eq, Ord)
 
 instance IsString Album where
   fromString = mkAlbum . fromString
@@ -99,11 +103,14 @@ instance IsString Album where
 mkAlbum :: Text -> Album
 mkAlbum = Album . avoidNulls
 
+-- | Convert 'Album' to 'Text'.
+
+unAlbum :: Album -> Text
+unAlbum (Album x) = x
+
 -- | Comment tag.
 
-newtype Comment = Comment
-  { unComment :: Text  -- ^ Convert 'Comment' to 'Text'.
-  } deriving (Show, Eq, Ord)
+newtype Comment = Comment Text deriving (Show, Eq, Ord)
 
 instance IsString Comment where
   fromString = mkComment . fromString
@@ -113,11 +120,14 @@ instance IsString Comment where
 mkComment :: Text -> Comment
 mkComment = Comment . avoidNulls
 
+-- | Convert 'Comment' to 'Text'.
+
+unComment :: Comment -> Text
+unComment (Comment x) = x
+
 -- | Genre tag.
 
-newtype Genre = Genre
-  { unGenre :: Text    -- ^ Convert 'Genre' to 'Text'.
-  } deriving (Show, Eq, Ord)
+newtype Genre = Genre Text deriving (Show, Eq, Ord)
 
 instance IsString Genre where
   fromString = mkGenre . fromString
@@ -127,22 +137,28 @@ instance IsString Genre where
 mkGenre :: Text -> Genre
 mkGenre = Genre . avoidNulls
 
+-- | Convert 'Genre' to 'Text'.
+
+unGenre :: Genre -> Text
+unGenre (Genre x) = x
+
 -- | Year tag.
 
-newtype Year = Year
-  { unYear :: Int      -- ^ Convert 'Year' to 'Int'.
-  } deriving (Show, Eq, Ord)
+newtype Year = Year Int deriving (Show, Eq, Ord)
 
 -- | Construction of 'Year' type, non-positive values result in 'Nothing'.
 
 mkYear :: Int -> Maybe Year
 mkYear = fmap Year . atLeast 1
 
+-- | Convert 'Year' to 'Int'.
+
+unYear :: Year -> Int
+unYear (Year x) = x
+
 -- | Track number tag.
 
-newtype TrackNumber = TrackNumber
-  { unTrackNumber :: Int -- ^ Convert 'TrackNumber' to 'Int'.
-  } deriving (Show, Eq, Ord)
+newtype TrackNumber = TrackNumber Int deriving (Show, Eq, Ord)
 
 -- | Construction of 'TrackNumber' type, non-positive values result in
 -- 'Nothing'.
@@ -150,22 +166,28 @@ newtype TrackNumber = TrackNumber
 mkTrackNumber :: Int -> Maybe TrackNumber
 mkTrackNumber = fmap TrackNumber . atLeast 1
 
+-- | Convert 'TrackNumber' to 'Int'.
+
+unTrackNumber :: TrackNumber -> Int
+unTrackNumber (TrackNumber x) = x
+
 -- | Duration in seconds.
 
-newtype Duration = Duration
-  { unDuration :: Int  -- ^ Convert 'Duration' to 'Int'.
-  } deriving (Show, Eq, Ord)
+newtype Duration = Duration Int deriving (Show, Eq, Ord)
 
 -- | Construction of 'Duration' values, negative values result in 'Nothing'.
 
 mkDuration :: Int -> Maybe Duration
 mkDuration = fmap Duration . atLeast 0
 
+-- | Convert 'Duration' to 'Int'.
+
+unDuration :: Duration -> Int
+unDuration (Duration x) = x
+
 -- | Bit rate in kb/s.
 
-newtype BitRate = BitRate
-  { unBitRate :: Int   -- ^ Convert 'BitRate' to 'Int'.
-  } deriving (Show, Eq, Ord)
+newtype BitRate = BitRate Int deriving (Show, Eq, Ord)
 
 -- | Construction of 'BitRate' values, negative values result in
 -- 'Nothing'.
@@ -173,11 +195,14 @@ newtype BitRate = BitRate
 mkBitRate :: Int -> Maybe BitRate
 mkBitRate = fmap BitRate . atLeast 0
 
+-- | Convert 'BitRate' to 'Int'.
+
+unBitRate :: BitRate -> Int
+unBitRate (BitRate x) = x
+
 -- | Sample rate in Hz.
 
-newtype SampleRate = SampleRate
-  { unSampleRate :: Int -- ^ Convert 'SampleRate' to 'Int'.
-  } deriving (Show, Eq, Ord)
+newtype SampleRate = SampleRate Int deriving (Show, Eq, Ord)
 
 -- | Construction of 'SampleRate' values, non-positive values result in
 -- 'Nothing'.
@@ -185,17 +210,25 @@ newtype SampleRate = SampleRate
 mkSampleRate :: Int -> Maybe SampleRate
 mkSampleRate = fmap SampleRate . atLeast 1
 
+-- | Convert 'SampleRate' to 'Int'.
+
+unSampleRate :: SampleRate -> Int
+unSampleRate (SampleRate x) = x
+
 -- | Number of channels in the audio stream.
 
-newtype Channels = Channels
-  { unChannels :: Int  -- ^ Convert 'Channels' to 'Int'.
-  } deriving (Show, Eq, Ord)
+newtype Channels = Channels Int deriving (Show, Eq, Ord)
 
 -- | Construction of 'Channels' values, non-positive values result in
 -- 'Nothing'.
 
 mkChannels :: Int -> Maybe Channels
 mkChannels = fmap Channels . atLeast 1
+
+-- | Convert 'Channels' to 'Int'.
+
+unChannels :: Channels -> Int
+unChannels (Channels x) = x
 
 -- | Replace null bytes with spaces.
 
