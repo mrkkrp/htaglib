@@ -128,13 +128,13 @@ For example (alignment is added):
 ```
 $ ./example "/home/mark/music/David Bowie/1977, Low/01 Speed of Life.flac"
 AudioTrack
-  { atTitle   = Title   {unTitle   = "Speed of Life"}
-  , atArtist  = Artist  {unArtist  = "David Bowie"}
-  , atAlbum   = Album   {unAlbum   = "Low"}
-  , atComment = Comment {unComment = ""}
-  , atGenre   = Genre   {unGenre   = ""}
-  , atYear    = Just    (Year {unYear = 1977})
-  , atTrack   = Just    (TrackNumber {unTrackNumber = 1})
+  { atTitle   = Title   "Speed of Life"
+  , atArtist  = Artist  "David Bowie"
+  , atAlbum   = Album   "Low"
+  , atComment = Comment ""
+  , atGenre   = Genre   ""
+  , atYear    = Just    (Year 1977)
+  , atTrack   = Just    (TrackNumber 1)
   }
 ```
 
