@@ -43,11 +43,11 @@ category:            Sound, Foreign
 synopsis:            Bindings to TagLib, audio meta-data library
 build-type:          Simple
 description:         Bindings to TagLib, audio meta-data library.
-extra-source-files:  CHANGELOG.md
+extra-doc-files:     CHANGELOG.md
                    , README.md
                    , audio-samples/README.md
-                   , audio-samples/sample.flac
-                   , audio-samples/sample.mp3
+data-files:          audio-samples/*.flac
+                   , audio-samples/*.mp3
 
 flag dev
   description:       Turn on development settings.
