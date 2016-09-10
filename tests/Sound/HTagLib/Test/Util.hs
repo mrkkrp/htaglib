@@ -32,22 +32,19 @@
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module Util
+module Sound.HTagLib.Test.Util
   ( AudioTags (..)
   , sampleGetter
   , sampleSetter
   , fileList
-  , caseWithFile
-  , cfbr )
+  , withFile
+  , shouldMatchTags )
 where
 
 import Data.Maybe (fromJust)
 import Data.Monoid
 import Sound.HTagLib
-
-import Test.Framework
-import Test.Framework.Providers.HUnit (testCase)
-import Test.HUnit hiding (Test, path)
+import Test.Hspec
 
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<$>), (<*>), pure)
@@ -118,24 +115,26 @@ fileList =
      { atBitRate = fromJust $ mkBitRate 136
      , atFileName = "audio-samples/sample.mp3"  }) ]
 
-caseWithFile
-  :: (FileType -> AudioTags -> Assertion)
+-- | Call given function with provided data.
+
+withFile
+  :: (FileType -> AudioTags -> Expectation)
   -> (FileType, AudioTags)
-  -> Test
-caseWithFile f (t, tags) = testCase name (f t tags)
+  -> Spec
+withFile f (t, tags) = it name (f t tags)
   where name = "using file: " ++ show (atFileName tags) ++ " (" ++ show t ++ ")"
 
--- | Create 'Assertion' that two collections of tags match. However, if bit
--- rate of the first is zero (which is the case with older versions of
+-- | Create an expectation that two collections of tags match. However, if
+-- bit rate of the first is zero (which is the case with older versions of
 -- TagLib when it's used with such short files as our samples), allow bit
 -- rate values differ.
 
-cfbr
+shouldMatchTags
   :: AudioTags         -- ^ Tags to test
   -> AudioTags         -- ^ Correct tags to test against
-  -> Assertion
-cfbr n tags =
+  -> Expectation
+shouldMatchTags given expected =
   let zeroBitRate = fromJust (mkBitRate 0)
-  in if atBitRate n == zeroBitRate
-       then n @?= tags { atBitRate = zeroBitRate }
-       else n @?= tags
+  in if atBitRate given == zeroBitRate
+       then given `shouldBe` expected { atBitRate = zeroBitRate }
+       else given `shouldBe` expected

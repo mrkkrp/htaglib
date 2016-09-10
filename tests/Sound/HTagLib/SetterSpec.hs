@@ -1,5 +1,5 @@
 --
--- HTagLib tests, testing of getters.
+-- HTagLib tests, testing of Setters.
 --
 -- Copyright © 2015–2016 Mark Karpov
 --
@@ -30,31 +30,54 @@
 -- ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 -- POSSIBILITY OF SUCH DAMAGE.
 
-module Getter (tests) where
+{-# LANGUAGE OverloadedStrings #-}
 
-import Test.Framework
-import Test.HUnit hiding (Test, path)
+module Sound.HTagLib.SetterSpec (spec) where
 
 import Sound.HTagLib
-import Util
+import Sound.HTagLib.Test.Util
+import System.Directory (getTemporaryDirectory, copyFile)
+import System.FilePath ((</>), takeFileName)
+import Test.Hspec
 
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<$>))
 #endif
 
-tests :: Test
-tests = testGroup "Getters" $
-  fmap (caseWithFile (const simpleGetter)) fileList ++
-  fmap (caseWithFile specializedGetter)    fileList
+spec :: Spec
+spec =
+  describe "setters" $ do
+    mapM_ (withFile $ const simpleSetter) fileList
+    mapM_ (withFile specializedSetter)    fileList
 
-simpleGetter :: AudioTags -> Assertion
-simpleGetter tags = do
-  let path = atFileName tags
-  extracted <- getTags path (id <$> sampleGetter path)
-  extracted `cfbr` tags
+dupeFile :: FilePath -> IO FilePath
+dupeFile path = do
+  newPath <- (</> takeFileName path) <$> getTemporaryDirectory
+  copyFile path newPath
+  return newPath
 
-specializedGetter :: FileType -> AudioTags -> Assertion
-specializedGetter t tags = do
+updateSampleTags :: AudioTags -> AudioTags
+updateSampleTags tags = tags
+  { atTitle       = mkTitle "title'"
+  , atArtist      = mkArtist "artist'"
+  , atAlbum       = mkAlbum "album'"
+  , atComment     = mkComment "comment'"
+  , atGenre       = mkGenre "genre'"
+  , atYear        = mkYear 2056
+  , atTrackNumber = mkTrackNumber 8 }
+
+simpleSetter :: AudioTags -> Expectation
+simpleSetter tags = do
   let path = atFileName tags
-  extracted <- getTags' path t (id <$> sampleGetter path)
-  extracted `cfbr` tags
+  dupe <- dupeFile path
+  setTags dupe Nothing sampleSetter
+  extracted <- getTags dupe (sampleGetter dupe)
+  extracted `shouldMatchTags` updateSampleTags (tags { atFileName = dupe })
+
+specializedSetter :: FileType -> AudioTags -> Expectation
+specializedSetter t tags = do
+  let path = atFileName tags
+  dupe <- dupeFile path
+  setTags' dupe Nothing t sampleSetter
+  extracted <- getTags dupe (sampleGetter dupe)
+  extracted `shouldMatchTags` updateSampleTags (tags { atFileName = dupe })

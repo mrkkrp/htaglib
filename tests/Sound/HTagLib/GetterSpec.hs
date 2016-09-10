@@ -1,5 +1,5 @@
 --
--- HTagLib tests, main module.
+-- HTagLib tests, testing of getters.
 --
 -- Copyright © 2015–2016 Mark Karpov
 --
@@ -30,14 +30,30 @@
 -- ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 -- POSSIBILITY OF SUCH DAMAGE.
 
-module Main (main) where
+module Sound.HTagLib.GetterSpec (spec) where
 
-import Test.Framework (defaultMain)
+import Sound.HTagLib
+import Sound.HTagLib.Test.Util
+import Test.Hspec
 
-import qualified Getter
-import qualified Setter
+#if !MIN_VERSION_base(4,8,0)
+import Control.Applicative ((<$>))
+#endif
 
-main :: IO ()
-main = defaultMain
-       [ Getter.tests
-       , Setter.tests ]
+spec :: Spec
+spec =
+  describe "getters" $ do
+    mapM_ (withFile $ const simpleGetter) fileList
+    mapM_ (withFile specializedGetter)    fileList
+
+simpleGetter :: AudioTags -> Expectation
+simpleGetter tags = do
+  let path = atFileName tags
+  extracted <- getTags path (id <$> sampleGetter path)
+  extracted `shouldMatchTags` tags
+
+specializedGetter :: FileType -> AudioTags -> Expectation
+specializedGetter t tags = do
+  let path = atFileName tags
+  extracted <- getTags' path t (id <$> sampleGetter path)
+  extracted `shouldMatchTags` tags

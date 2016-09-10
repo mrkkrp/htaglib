@@ -1,3 +1,7 @@
+## HTagLib 1.0.4
+
+* Re-wrote the test suite with Hspec.
+
 ## HTagLib 1.0.3
 
 * Export functions instead of record selectors for tag newtype wrappers.
