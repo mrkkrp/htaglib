@@ -31,7 +31,7 @@
 -- POSSIBILITY OF SUCH DAMAGE.
 
 name:                htaglib
-version:             1.0.3
+version:             1.0.4
 cabal-version:       >= 1.10
 license:             BSD3
 license-file:        LICENSE.md
@@ -85,7 +85,7 @@ test-suite tests
                    , directory  >= 1.2 && < 1.3
                    , filepath   >= 1.4 && < 2.0
                    , hspec      >= 2.0 && < 3.0
-                   , htaglib    >= 1.0.3
+                   , htaglib    >= 1.0.4
   default-extensions:
                      CPP
   default-language:  Haskell2010
