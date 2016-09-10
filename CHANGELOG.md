@@ -2,6 +2,8 @@
 
 * Re-wrote the test suite with Hspec.
 
+* Drop support for GHC 7.6.
+
 ## HTagLib 1.0.3
 
 * Export functions instead of record selectors for tag newtype wrappers.

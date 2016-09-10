@@ -4,8 +4,6 @@ sudo: false
 
 matrix:
   include:
-    - env: CABALVER=1.16 GHCVER=7.6.3
-      addons: {apt: {packages: [cabal-install-1.16,ghc-7.6.3,libtagc0-dev], sources: [hvr-ghc]}}
     - env: CABALVER=1.18 GHCVER=7.8.4
       addons: {apt: {packages: [cabal-install-1.18,ghc-7.8.4,libtagc0-dev], sources: [hvr-ghc]}}
     - env: CABALVER=1.22 GHCVER=7.10.3
@@ -29,7 +27,6 @@ install:
 
 script:
  - case "$CABALVER" in
-    "1.16") cabal configure --enable-tests -v2 -f dev ;;
     "1.18") cabal configure --enable-tests --enable-library-coverage -v2 -f dev ;;
     *)      cabal configure --enable-tests --enable-coverage -v2 -f dev ;;
    esac
