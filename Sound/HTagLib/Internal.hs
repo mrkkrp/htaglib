@@ -164,8 +164,8 @@ foreign import ccall unsafe "taglib/tag_c.h taglib_id3v2_set_default_text_encodi
 
 -- File API
 
--- | Open audio file and return its ID (abstraction that rest of library can
--- pass around). In case of trouble 'IOException' is thrown.
+-- | Open audio file and return its ID (an opaque type that the rest of
+-- library can pass around). In case of trouble 'IOException' is thrown.
 
 newFile
   :: FilePath          -- ^ Path to audio file
