@@ -8,6 +8,7 @@
 [![Coverage Status](https://coveralls.io/repos/mrkkrp/htaglib/badge.svg?branch=master&service=github)](https://coveralls.io/github/mrkkrp/htaglib?branch=master)
 
 * [Alternatives](#alternatives)
+* [A note for FLAC users](#a-note-for-flac-users)
 * [Quick start](#quick-start)
     * [Reading meta data](#reading-meta-data)
     * [Writing meta data](#writing-meta-data)
@@ -44,6 +45,15 @@ There is at least two Haskell bindings doing “the same” thing:
 Both are very low level, without any protection or higher-level
 abstractions, not really type-safe. I personally don't want to use them, so
 I wrote this.
+
+## A note for FLAC users
+
+If you want to work with FLAC, there is
+a [complete Haskell binding](https://github.com/mrkkrp/flac) to `libFLAC` —
+reference FLAC implementation. It allows to work with all FLAC metadata
+(read and write) and also provides Haskell API to stream encoder and stream
+decoder. Please prefer that package if you don't need to work with other
+audio formats.
 
 ## Quick start
 
@@ -146,7 +156,8 @@ N.B. If you need to extract duration of tracks, TagLib only returns number
 of seconds as an integer. This means that if you want to calculate total
 duration, you'll have slightly incorrect result. Proper solution is to
 extract duration as floating-point number, for that we recommend bindings to
-`libsndfile` — [`hsndfile`](https://hackage.haskell.org/package/hsndfile).
+`libsndfile` — [`hsndfile`](https://hackage.haskell.org/package/hsndfile)
+(or the above-mentioned `flac` package for Haskell if you work with FLAC).
 
 ### Writing meta data
 
