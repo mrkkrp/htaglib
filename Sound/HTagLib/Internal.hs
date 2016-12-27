@@ -47,7 +47,6 @@ where
 import Control.Exception (throw, bracket)
 import Control.Monad (when, unless)
 import Data.ByteString (packCString, useAsCString)
-import Data.Maybe (fromJust)
 import Data.Text (Text)
 import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import Foreign
@@ -288,27 +287,23 @@ setTrackNumber v = setIntValue c_taglib_tag_set_track (T.unTrackNumber <$> v)
 
 -- | Get duration of track associated with file.
 
-getDuration :: FileId -> IO T.Duration
-getDuration = fmap (fromJust . T.mkDuration)
-  . getIntProperty c_taglib_properties_length
+getDuration :: FileId -> IO (Maybe T.Duration)
+getDuration = fmap T.mkDuration . getIntProperty c_taglib_properties_length
 
 -- | Get bit rate of track associated with file.
 
-getBitRate :: FileId -> IO T.BitRate
-getBitRate = fmap (fromJust . T.mkBitRate)
-  . getIntProperty c_taglib_properties_bitrate
+getBitRate :: FileId -> IO (Maybe T.BitRate)
+getBitRate = fmap T.mkBitRate . getIntProperty c_taglib_properties_bitrate
 
 -- | Get sample rate of track associated with file.
 
-getSampleRate :: FileId -> IO T.SampleRate
-getSampleRate = fmap (fromJust . T.mkSampleRate)
-  . getIntProperty c_taglib_properties_samplerate
+getSampleRate :: FileId -> IO (Maybe T.SampleRate)
+getSampleRate = fmap T.mkSampleRate . getIntProperty c_taglib_properties_samplerate
 
 -- | Get number of channels in track associated with file.
 
-getChannels :: FileId -> IO T.Channels
-getChannels = fmap (fromJust . T.mkChannels)
-  . getIntProperty c_taglib_properties_channels
+getChannels :: FileId -> IO (Maybe T.Channels)
+getChannels = fmap T.mkChannels . getIntProperty c_taglib_properties_channels
 
 -- Special convenience ID3v2 functions
 
