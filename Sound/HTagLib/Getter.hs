@@ -1,6 +1,6 @@
 -- |
 -- Module      :  Sound.HTagLib.Getter
--- Copyright   :  © 2015–2016 Mark Karpov
+-- Copyright   :  © 2015–2017 Mark Karpov
 -- License     :  BSD 3 clause
 --
 -- Maintainer  :  Mark Karpov <markkarpov@opmbx.org>
