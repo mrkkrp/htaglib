@@ -82,7 +82,7 @@ test-suite tests
                    , Sound.HTagLib.SetterSpec
                    , Sound.HTagLib.Test.Util
   build-depends:     base       >= 4.7 && < 5.0
-                   , directory  >= 1.2 && < 1.3
+                   , directory  >= 1.2 && < 1.4
                    , filepath   >= 1.4 && < 2.0
                    , hspec      >= 2.0 && < 3.0
                    , htaglib    >= 1.0.4
