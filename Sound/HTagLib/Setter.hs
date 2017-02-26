@@ -29,6 +29,7 @@ module Sound.HTagLib.Setter
 where
 
 import Control.Applicative ((<|>))
+import Control.Monad.IO.Class
 import Data.Foldable (forM_)
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
@@ -77,34 +78,34 @@ instance Monoid TagSetter where
 --
 -- In case of trouble 'I.HTagLibException' will be thrown.
 
-setTags
-  :: FilePath          -- ^ Path to audio file
+setTags :: MonadIO m
+  => FilePath          -- ^ Path to audio file
   -> Maybe ID3v2Encoding -- ^ Encoding for ID3v2 frames
   -> TagSetter         -- ^ Setter
-  -> IO ()
+  -> m ()
 setTags path enc = execSetter path enc Nothing
 
 -- | Similar to 'setTags', but you can also specify type of audio file
 -- explicitly (otherwise it's guessed from file extension).
 
-setTags'
-  :: FilePath          -- ^ Path to audio file
+setTags' :: MonadIO m
+  => FilePath          -- ^ Path to audio file
   -> Maybe ID3v2Encoding -- ^ Encoding for ID3v2 frames
   -> FileType          -- ^ Type of audio file
   -> TagSetter         -- ^ Setter
-  -> IO ()
+  -> m ()
 setTags' path enc t = execSetter path enc (Just t)
 
 -- | The most general way to set meta data. 'setTags' and 'setTags'' are
 -- just wrappers around this function.
 
-execSetter
-  :: FilePath          -- ^ Path to audio file
+execSetter :: MonadIO m
+  => FilePath          -- ^ Path to audio file
   -> Maybe ID3v2Encoding -- ^ Encoding for ID3v2 frames
   -> Maybe FileType    -- ^ Type of audio file (if known)
   -> TagSetter         -- ^ Setter
-  -> IO ()
-execSetter path enc t TagSetter {..} = I.withFile path t $ \fid -> do
+  -> m ()
+execSetter path enc t TagSetter {..} = liftIO . I.withFile path t $ \fid -> do
   forM_ enc I.id3v2SetEncoding
   let writeTag x f = forM_ x (`f` fid)
   writeTag sdTitle       I.setTitle

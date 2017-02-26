@@ -1,3 +1,8 @@
+## HTagLib 1.1.0
+
+* Made `getTags`, `getTags'`, `setTags`, and `setTags'` callable from any
+  instance of `MonadIO`, not only `IO`.
+
 ## HTagLib 1.0.4
 
 * Re-wrote the test suite with Hspec.

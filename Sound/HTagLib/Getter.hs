@@ -32,6 +32,7 @@ module Sound.HTagLib.Getter
   , channelsGetter )
 where
 
+import Control.Monad.IO.Class
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
 
@@ -60,31 +61,31 @@ instance Applicative TagGetter where
 --
 -- In case of trouble 'I.HTagLibException' will be thrown.
 
-getTags
-  :: FilePath          -- ^ Path to audio file
+getTags :: MonadIO m
+  => FilePath          -- ^ Path to audio file
   -> TagGetter a       -- ^ Getter
-  -> IO a              -- ^ Extracted data
+  -> m a              -- ^ Extracted data
 getTags path = execGetter path Nothing
 
 -- | This is essentially the same as 'getTags', but allows to explicitly
 -- choose file type (see 'FileType').
 
-getTags'
-  :: FilePath          -- ^ Path to audio file
+getTags' :: MonadIO m
+  => FilePath          -- ^ Path to audio file
   -> FileType          -- ^ Type of audio file
   -> TagGetter a       -- ^ Getter
-  -> IO a              -- ^ Extracted data
+  -> m a               -- ^ Extracted data
 getTags' path t = execGetter path (Just t)
 
 -- | This is the most general way to read meta data from file. 'getTags' and
 -- 'getTags'' are just wrappers around the function.
 
-execGetter
-  :: FilePath         -- ^ Path to audio file
+execGetter :: MonadIO m
+  => FilePath         -- ^ Path to audio file
   -> Maybe FileType   -- ^ Type of audio file (if known)
   -> TagGetter a      -- ^ Getter
-  -> IO a             -- ^ Extracted data
-execGetter path t = I.withFile path t . runGetter
+  -> m a              -- ^ Extracted data
+execGetter path t = liftIO . I.withFile path t . runGetter
 
 -- | Getter to retrieve track title.
 
