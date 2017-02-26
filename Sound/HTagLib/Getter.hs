@@ -67,7 +67,7 @@ getTags
 getTags path = execGetter path Nothing
 
 -- | This is essentially the same as 'getTags', but allows to explicitly
--- choose file type (see 'I.FileType').
+-- choose file type (see 'FileType').
 
 getTags'
   :: FilePath          -- ^ Path to audio file
