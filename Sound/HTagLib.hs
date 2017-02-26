@@ -11,8 +11,32 @@
 -- module you should import to use in your projects.
 
 module Sound.HTagLib
-  ( -- * Data types
-    Title
+  ( -- * Getters
+    getTags
+  , getTags'
+  , titleGetter
+  , artistGetter
+  , albumGetter
+  , commentGetter
+  , genreGetter
+  , yearGetter
+  , trackNumberGetter
+  , durationGetter
+  , bitRateGetter
+  , sampleRateGetter
+  , channelsGetter
+    -- * Setters
+  , setTags
+  , setTags'
+  , titleSetter
+  , artistSetter
+  , albumSetter
+  , commentSetter
+  , genreSetter
+  , yearSetter
+  , trackNumberSetter
+    -- * Data types
+  , Title
   , mkTitle
   , unTitle
   , Artist
@@ -47,33 +71,9 @@ module Sound.HTagLib
   , unChannels
   , FileType (..)
   , ID3v2Encoding (..)
-  , HTagLibException (..)
-    -- * Getters
   , TagGetter
-  , getTags
-  , getTags'
-  , titleGetter
-  , artistGetter
-  , albumGetter
-  , commentGetter
-  , genreGetter
-  , yearGetter
-  , trackNumberGetter
-  , durationGetter
-  , bitRateGetter
-  , sampleRateGetter
-  , channelsGetter
-    -- * Setters
   , TagSetter
-  , setTags
-  , setTags'
-  , titleSetter
-  , artistSetter
-  , albumSetter
-  , commentSetter
-  , genreSetter
-  , yearSetter
-  , trackNumberSetter )
+  , HTagLibException (..) )
 where
 
 import Sound.HTagLib.Getter
