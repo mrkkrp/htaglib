@@ -40,8 +40,8 @@ import qualified Sound.HTagLib.Internal as I
 import Control.Applicative (Applicative, (<$>), (<*>), pure)
 #endif
 
--- | This type represents composable entity that can be used with 'getTags'
--- or 'getTags'' functions to read batch of meta parameters.
+-- | This type represents a composable entity that can be used with
+-- 'getTags' or 'getTags'' functions to read batch of meta parameters.
 
 newtype TagGetter a = TagGetter { runGetter :: I.FileId -> IO a }
 
@@ -57,7 +57,7 @@ instance Applicative TagGetter where
 -- | @getTags path g@ will try to read file located at @path@ and read meta
 -- data of the file using getter @g@. Type of file will be guessed from its
 -- extension. If this is not satisfactory and you want to explicitly specify
--- file type, see 'getTags'' variation of this function.
+-- the file type, see 'getTags'' variation of this function.
 --
 -- In case of trouble 'I.HTagLibException' will be thrown.
 

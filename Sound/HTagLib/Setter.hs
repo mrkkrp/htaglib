@@ -38,8 +38,8 @@ import qualified Sound.HTagLib.Internal as I
 import Data.Monoid
 #endif
 
--- | Composable entity that can be used together with 'setTags' or
--- 'setTags'' to write meta data to audio file.
+-- | A composable entity that can be used together with the 'setTags' or the
+-- 'setTags'' functions to write meta data to an audio file.
 --
 -- Note that in case of (for example):
 --
@@ -74,7 +74,7 @@ instance Monoid TagSetter where
     , sdYear        = f sdYear
     , sdTrackNumber = f sdTrackNumber }
 
--- | Set tags in specified file using given setter.
+-- | Set tags in specified file using the given setter.
 --
 -- In case of trouble 'I.HTagLibException' will be thrown.
 

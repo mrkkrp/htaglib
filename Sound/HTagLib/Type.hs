@@ -242,8 +242,8 @@ atLeast :: Int -> Int -> Maybe Int
 atLeast a b = if b >= a then Just b else Nothing
 
 -- | Types of files TagLib can work with. This may be used to explicitly
--- specify type of file rather than relying on TagLib ability to guess type
--- of file from its extension.
+-- specify type of file instead of relying on the TagLib's ability to guess
+-- type of file from its extension.
 
 data FileType
   = MPEG               -- ^ MPEG
