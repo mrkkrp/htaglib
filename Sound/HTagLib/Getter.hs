@@ -126,20 +126,19 @@ trackNumberGetter = TagGetter I.getTrackNumber
 
 -- | Getter to retrieve duration in seconds.
 
-durationGetter :: TagGetter Duration
+durationGetter :: TagGetter (Maybe Duration)
 durationGetter = TagGetter I.getDuration
 
 -- | Getter to retrieve bit rate.
-
-bitRateGetter :: TagGetter BitRate
+bitRateGetter :: TagGetter (Maybe BitRate)
 bitRateGetter = TagGetter I.getBitRate
 
 -- | Getter to retrieve sample rate.
 
-sampleRateGetter :: TagGetter SampleRate
+sampleRateGetter :: TagGetter (Maybe SampleRate)
 sampleRateGetter = TagGetter I.getSampleRate
 
 -- | Getter to retrieve number of channels in audio data.
 
-channelsGetter :: TagGetter Channels
+channelsGetter :: TagGetter (Maybe Channels)
 channelsGetter = TagGetter I.getChannels
