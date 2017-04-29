@@ -87,7 +87,7 @@ test-suite tests
                    , directory  >= 1.2 && < 1.4
                    , filepath   >= 1.4 && < 2.0
                    , hspec      >= 2.0 && < 3.0
-                   , htaglib    >= 1.1.0
+                   , htaglib
   default-extensions:
                      CPP
   default-language:  Haskell2010
