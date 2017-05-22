@@ -16,8 +16,7 @@
 * [License](#license)
 
 This is Haskell bindings to [TagLib](https://taglib.github.io/), library for
-reading and editing meta-data of several popular audio formats. This library
-is easy to use and type-safe.
+reading and editing meta-data of several popular audio formats.
 
 It works with the following formats:
 
@@ -31,7 +30,7 @@ It works with the following formats:
 * MP4
 * ASF
 
-This happens in abstract, uniform way, so you don't need to handle any
+This happens in an abstract, uniform way, so you don't need to handle any
 low-level details. As a consequence, it's currently not possible to work
 with format-specific functionality.
 
@@ -49,18 +48,17 @@ I wrote this.
 ## A note for FLAC users
 
 If you want to work with FLAC, there is
-a [complete Haskell binding](https://github.com/mrkkrp/flac) to `libFLAC` —
-reference FLAC implementation. It allows to work with all FLAC metadata
-(read and write) and also provides Haskell API to stream encoder and stream
-decoder. Please prefer that package if you don't need to work with other
-audio formats.
+a [complete Haskell binding](https://github.com/mrkkrp/flac) to
+`libFLAC`—reference FLAC implementation. It allows to work with all FLAC
+metadata (read and write) and also provides Haskell API to stream encoder
+and stream decoder. Please prefer that package if you don't need to work
+with other audio formats.
 
 ## Quick start
 
 First, since this is bindings to C-interface of the library, you'll need to
-install the library itself. If you're on Unix-like system, chances are
-you'll have it in official repositories of your distro. Users of other
-systems should also be able to install it without particular pain.
+install the library itself. If you're on a Unix-like system, chances are
+you'll have it in the official repositories of your distro.
 
 After installation of the library, install `htaglib` package using Cabal or
 Stack (recommended):
@@ -96,8 +94,8 @@ A couple of notes here. We use unique types for every component of meta
 data, so it's more difficult to use track title in lieu of track artist, for
 example. Meta data that is represented by strings also has smart
 constructors, they replace zero bytes with spaces, this is necessary to
-avoid troubles when your Haskell strings go to C-level (well, zero-bytes in
-strings is rather edge case, but it should be mentioned). Of course,
+avoid troubles when your Haskell strings go to the C-level (well, zero-bytes
+in strings is rather edge case, but it should be mentioned). Of course,
 `Title`, `Artist`, `Album`, `Comment`, and `Genre` all are instances of
 `IsString`, so just turn on `OverloadedStrings` and you can use normal
 string literals to create data of these types.
@@ -156,8 +154,8 @@ N.B. If you need to extract duration of tracks, TagLib only returns number
 of seconds as an integer. This means that if you want to calculate total
 duration, you'll have slightly incorrect result. Proper solution is to
 extract duration as floating-point number, for that we recommend bindings to
-`libsndfile` — [`hsndfile`](https://hackage.haskell.org/package/hsndfile)
-(or the above-mentioned `flac` package for Haskell if you work with FLAC).
+`libsndfile`—[`hsndfile`](https://hackage.haskell.org/package/hsndfile) (or
+the above-mentioned `flac` package for Haskell if you work with FLAC).
 
 ### Writing meta data
 
@@ -184,8 +182,7 @@ main = do
   print track
 ```
 
-This code loads file and changes “title” and “artist” meta data
-fields.
+This code loads file and changes “title” and “artist” meta data fields.
 
 ## Conclusion
 

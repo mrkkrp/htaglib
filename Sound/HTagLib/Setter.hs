@@ -7,7 +7,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- High-level interface for writing audio meta data. You don't need to
+-- A high-level interface for writing audio meta data. You don't need to
 -- import this module directly, import "Sound.HTagLib" instead.
 
 {-# LANGUAGE CPP             #-}
@@ -76,7 +76,7 @@ instance Monoid TagSetter where
 
 -- | Set tags in specified file using the given setter.
 --
--- In case of trouble 'I.HTagLibException' will be thrown.
+-- In the case of trouble 'I.HTagLibException' will be thrown.
 
 setTags :: MonadIO m
   => FilePath          -- ^ Path to audio file

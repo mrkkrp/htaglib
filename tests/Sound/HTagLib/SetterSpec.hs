@@ -9,7 +9,7 @@ import System.FilePath ((</>), takeFileName)
 import Test.Hspec
 
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative ((<$>))
+import Control.Applicative
 #endif
 
 spec :: Spec

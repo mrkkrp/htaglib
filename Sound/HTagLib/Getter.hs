@@ -7,7 +7,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- High-level applicative interface for reading of audio meta data. You
+-- A high-level applicative interface for reading of audio meta data. You
 -- don't need to import this module directly, import "Sound.HTagLib"
 -- instead.
 
@@ -37,11 +37,11 @@ import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
 
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative (Applicative, (<$>), (<*>), pure)
+import Control.Applicative
 #endif
 
--- | This type represents a composable entity that can be used with
--- 'getTags' or 'getTags'' functions to read batch of meta parameters.
+-- | A composable entity that can be used with 'getTags' or 'getTags''
+-- functions to read batch of meta parameters.
 
 newtype TagGetter a = TagGetter { runGetter :: I.FileId -> IO a }
 
@@ -59,7 +59,7 @@ instance Applicative TagGetter where
 -- extension. If this is not satisfactory and you want to explicitly specify
 -- the file type, see 'getTags'' variation of this function.
 --
--- In case of trouble 'I.HTagLibException' will be thrown.
+-- In the case of trouble 'I.HTagLibException' will be thrown.
 
 getTags :: MonadIO m
   => FilePath          -- ^ Path to audio file

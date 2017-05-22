@@ -7,8 +7,8 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- This module includes complete high-level interface to TagLib. This is the
--- module you should import to use in your projects.
+-- This module provides a complete high-level interface to TagLib. This is
+-- the module you should import to use in your projects.
 
 module Sound.HTagLib
   ( -- * Getters

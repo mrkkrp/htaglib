@@ -68,6 +68,7 @@ data TagLibProperties
 
 newtype FileId = FileId (Ptr TagLibFile)
 
+----------------------------------------------------------------------------
 -- Misc
 
 foreign import ccall unsafe "taglib/tag_c.h taglib_set_string_management_enabled"
@@ -96,6 +97,7 @@ foreign import ccall unsafe "taglib/tag_c.h taglib_file_audioproperties"
 foreign import ccall unsafe "taglib/tag_c.h taglib_file_save"
   c_taglib_file_save :: Ptr TagLibFile -> IO CInt
 
+----------------------------------------------------------------------------
 -- Tag API
 
 foreign import ccall unsafe "taglib/tag_c.h taglib_tag_title"
@@ -140,6 +142,7 @@ foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_year"
 foreign import ccall unsafe "taglib/tag_c.h taglib_tag_set_track"
   c_taglib_tag_set_track :: Ptr TagLibTag -> CUInt -> IO ()
 
+----------------------------------------------------------------------------
 -- Audio properties API
 
 foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_length"
@@ -154,14 +157,13 @@ foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_samplerate"
 foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_channels"
   c_taglib_properties_channels :: Ptr TagLibProperties -> IO CInt
 
+----------------------------------------------------------------------------
 -- Special convenience ID3v2 functions
 
 foreign import ccall unsafe "taglib/tag_c.h taglib_id3v2_set_default_text_encoding"
   c_taglib_id3v2_set_default_text_encoding :: CInt -> IO ()
 
--- Wrappers. Here we prepare a little higher-level interface that will be
--- used by the rest of the library.
-
+----------------------------------------------------------------------------
 -- File API
 
 -- | Open audio file and return its ID (an opaque type that the rest of
@@ -212,6 +214,7 @@ saveFile path (FileId ptr) = do
   unless success $
     throw (T.SavingFailed path)
 
+----------------------------------------------------------------------------
 -- Tag API
 
 -- | Get title tag associated with file.
@@ -284,6 +287,7 @@ setYear v = setIntValue c_taglib_tag_set_year (T.unYear <$> v)
 setTrackNumber :: Maybe T.TrackNumber -> FileId -> IO ()
 setTrackNumber v = setIntValue c_taglib_tag_set_track (T.unTrackNumber <$> v)
 
+----------------------------------------------------------------------------
 -- Audio properties API
 
 -- | Get duration of track associated with file.
@@ -310,6 +314,7 @@ getChannels :: FileId -> IO T.Channels
 getChannels = fmap (fromJust . T.mkChannels)
   . getIntProperty c_taglib_properties_channels
 
+----------------------------------------------------------------------------
 -- Special convenience ID3v2 functions
 
 -- | Set the default encoding for ID3v2 frames that are written to tags.
@@ -317,6 +322,7 @@ getChannels = fmap (fromJust . T.mkChannels)
 id3v2SetEncoding :: T.ID3v2Encoding -> IO ()
 id3v2SetEncoding = c_taglib_id3v2_set_default_text_encoding . enumToCInt
 
+----------------------------------------------------------------------------
 -- Helpers
 
 getStrValue
