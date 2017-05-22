@@ -1,3 +1,7 @@
+## HTagLib 1.1.1
+
+* Improved/updated documentation and metadata.
+
 ## HTagLib 1.1.0
 
 * Made `getTags`, `getTags'`, `setTags`, and `setTags'` callable from any
