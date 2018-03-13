@@ -5,7 +5,6 @@
 [![Stackage Nightly](http://stackage.org/package/htaglib/badge/nightly)](http://stackage.org/nightly/package/htaglib)
 [![Stackage LTS](http://stackage.org/package/htaglib/badge/lts)](http://stackage.org/lts/package/htaglib)
 [![Build Status](https://travis-ci.org/mrkkrp/htaglib.svg?branch=master)](https://travis-ci.org/mrkkrp/htaglib)
-[![Coverage Status](https://coveralls.io/repos/mrkkrp/htaglib/badge.svg?branch=master&service=github)](https://coveralls.io/github/mrkkrp/htaglib?branch=master)
 
 * [Alternatives](#alternatives)
 * [A note for FLAC users](#a-note-for-flac-users)
