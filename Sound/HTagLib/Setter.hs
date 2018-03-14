@@ -31,11 +31,12 @@ where
 import Control.Applicative ((<|>))
 import Control.Monad.IO.Class
 import Data.Foldable (forM_)
+import Data.Semigroup (Semigroup (..))
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
 
 #if !MIN_VERSION_base(4,8,0)
-import Data.Monoid
+import Data.Monoid hiding ((<>))
 #endif
 
 -- | A composable entity that can be used together with the 'setTags' or the
@@ -56,6 +57,16 @@ data TagSetter = TagSetter
   , sdYear        :: Maybe (Maybe Year)
   , sdTrackNumber :: Maybe (Maybe TrackNumber) }
 
+instance Semigroup TagSetter where
+  x <> y = let f g = g x <|> g y in TagSetter
+    { sdTitle       = f sdTitle
+    , sdArtist      = f sdArtist
+    , sdAlbum       = f sdAlbum
+    , sdComment     = f sdComment
+    , sdGenre       = f sdGenre
+    , sdYear        = f sdYear
+    , sdTrackNumber = f sdTrackNumber }
+
 instance Monoid TagSetter where
   mempty = TagSetter
     { sdTitle       = Nothing
@@ -65,14 +76,7 @@ instance Monoid TagSetter where
     , sdGenre       = Nothing
     , sdYear        = Nothing
     , sdTrackNumber = Nothing }
-  mappend x y = let f g = g x <|> g y in TagSetter
-    { sdTitle       = f sdTitle
-    , sdArtist      = f sdArtist
-    , sdAlbum       = f sdAlbum
-    , sdComment     = f sdComment
-    , sdGenre       = f sdGenre
-    , sdYear        = f sdYear
-    , sdTrackNumber = f sdTrackNumber }
+  mappend = (<>)
 
 -- | Set tags in specified file using the given setter.
 --

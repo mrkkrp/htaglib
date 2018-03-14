@@ -10,12 +10,14 @@ module Sound.HTagLib.Test.Util
 where
 
 import Data.Maybe (fromJust)
-import Data.Monoid
 import Sound.HTagLib
 import Test.Hspec
 
 #if !MIN_VERSION_base(4,8,0)
 import Control.Applicative
+#endif
+#if !MIN_VERSION_base(4,11,0)
+import Data.Monoid
 #endif
 
 data AudioTags = AudioTags

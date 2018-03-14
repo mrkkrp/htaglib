@@ -1,3 +1,7 @@
+## HTagLib
+
+* Compiles with GHC 8.4.1.
+
 ## HTagLib 1.1.1
 
 * Improved/updated documentation and metadata.
