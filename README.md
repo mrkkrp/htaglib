@@ -59,13 +59,6 @@ First, since this is bindings to C-interface of the library, you'll need to
 install the library itself. If you're on a Unix-like system, chances are
 you'll have it in the official repositories of your distro.
 
-After installation of the library, install `htaglib` package using Cabal or
-Stack (recommended):
-
-```
-$ stack install htaglib
-```
-
 ### Reading meta data
 
 Now to the hacking. It's recommended that you define a record representing
