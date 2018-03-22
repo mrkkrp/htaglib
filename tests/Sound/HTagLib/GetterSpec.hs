@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP #-}
+
 module Sound.HTagLib.GetterSpec (spec) where
 
 import Sound.HTagLib
