@@ -4,6 +4,9 @@
 
 * Added `Semigroup` instance for `TagSetter`.
 
+* All definitions are re-exported in the `Sound.HTagLib` module, so other
+  modules have been hidden.
+
 ## HTagLib 1.1.1
 
 * Improved/updated documentation and metadata.

@@ -36,10 +36,10 @@ library
     build-depends:    semigroups       == 0.18.*
   extra-libraries:    tag_c
   exposed-modules:    Sound.HTagLib
-                    , Sound.HTagLib.Type
+  other-modules:      Sound.HTagLib.Type
                     , Sound.HTagLib.Getter
                     , Sound.HTagLib.Setter
-  other-modules:      Sound.HTagLib.Internal
+                    , Sound.HTagLib.Internal
   if flag(dev)
     ghc-options:      -Wall -Werror
   else
