@@ -57,6 +57,8 @@ data TagSetter = TagSetter
   , sdYear        :: Maybe (Maybe Year)
   , sdTrackNumber :: Maybe (Maybe TrackNumber) }
 
+-- | @since 1.2.0
+
 instance Semigroup TagSetter where
   x <> y = let f g = g x <|> g y in TagSetter
     { sdTitle       = f sdTitle

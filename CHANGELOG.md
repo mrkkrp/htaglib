@@ -1,6 +1,8 @@
-## HTagLib
+## HTagLib 1.2.0
 
 * Compiles with GHC 8.4.1.
+
+* Added `Semigroup` instance for `TagSetter`.
 
 ## HTagLib 1.1.1
 
