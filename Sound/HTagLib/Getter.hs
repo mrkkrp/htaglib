@@ -11,7 +11,7 @@
 -- don't need to import this module directly, import "Sound.HTagLib"
 -- instead.
 
-{-# LANGUAGE CPP #-}
+{-# LANGUAGE DeriveFunctor #-}
 
 module Sound.HTagLib.Getter
   ( -- * High-level API
@@ -36,17 +36,11 @@ import Control.Monad.IO.Class
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
 
-#if !MIN_VERSION_base(4,8,0)
-import Control.Applicative
-#endif
-
 -- | A composable entity that can be used with 'getTags' or 'getTags''
 -- functions to read batch of meta parameters.
 
 newtype TagGetter a = TagGetter { runGetter :: I.FileId -> IO a }
-
-instance Functor TagGetter where
-  fmap f x = TagGetter $ \fid -> f <$> runGetter x fid
+  deriving Functor
 
 instance Applicative TagGetter where
   pure    = TagGetter . const . return

@@ -1,14 +1,8 @@
-{-# LANGUAGE CPP #-}
-
 module Sound.HTagLib.GetterSpec (spec) where
 
 import Sound.HTagLib
 import Sound.HTagLib.Test.Util
 import Test.Hspec
-
-#if !MIN_VERSION_base(4,8,0)
-import Control.Applicative
-#endif
 
 spec :: Spec
 spec =
