@@ -10,7 +10,6 @@
 -- A high-level interface for writing audio meta data. You don't need to
 -- import this module directly, import "Sound.HTagLib" instead.
 
-{-# LANGUAGE CPP             #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Sound.HTagLib.Setter
@@ -34,10 +33,6 @@ import Data.Foldable (forM_)
 import Data.Semigroup (Semigroup (..))
 import Sound.HTagLib.Type
 import qualified Sound.HTagLib.Internal as I
-
-#if !MIN_VERSION_base(4,8,0)
-import Data.Monoid hiding ((<>))
-#endif
 
 -- | A composable entity that can be used together with the 'setTags' or the
 -- 'setTags'' functions to write meta data to an audio file.

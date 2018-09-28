@@ -10,8 +10,6 @@
 -- Low-level interaction with underlying C API. You don't want to use this,
 -- see "Sound.HTagLib" instead.
 
-{-# LANGUAGE CPP                      #-}
-{-# LANGUAGE EmptyDataDecls           #-}
 {-# LANGUAGE ForeignFunctionInterface #-}
 
 module Sound.HTagLib.Internal
@@ -54,10 +52,6 @@ import Foreign
 import Foreign.C.String
 import Foreign.C.Types
 import qualified Sound.HTagLib.Type as T
-
-#if !MIN_VERSION_base(4,8,0)
-import Control.Applicative ((<$>))
-#endif
 
 data TagLibFile
 data TagLibTag
