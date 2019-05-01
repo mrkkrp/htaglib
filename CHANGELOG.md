@@ -1,6 +1,6 @@
 ## Unreleased
 
-* Dropped support for GHC 7.8.
+* Dropped support for GHC 7.10 and older.
 
 ## HTagLib 1.2.0
 
