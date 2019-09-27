@@ -46,12 +46,11 @@ I wrote this.
 
 ## A note for FLAC users
 
-If you want to work with FLAC, there is
-a [complete Haskell binding](https://github.com/mrkkrp/flac) to
-`libFLAC`—reference FLAC implementation. It allows to work with all FLAC
-metadata (read and write) and also provides Haskell API to stream encoder
-and stream decoder. Please prefer that package if you don't need to work
-with other audio formats.
+If you want to work with FLAC, there is a [complete Haskell
+binding](https://github.com/mrkkrp/flac) to `libFLAC`—reference FLAC
+implementation. It allows to work with all FLAC metadata (read and write)
+and also provides Haskell API to stream encoder and stream decoder. Please
+prefer that package if you don't need to work with other audio formats.
 
 ## Quick start
 
@@ -182,6 +181,13 @@ With the interface provided by `getTags` and `setTags` it's not possible to
 forget to close file or free some resource. You can read all meta data at
 once directly into your data structure in type-safe manner. Writing meta
 data should be trivial too. Have fun!
+
+## Contribution
+
+Issues, bugs, and questions may be reported in [the GitHub issue tracker for
+this project](https://github.com/mrkkrp/htaglib/issues).
+
+Pull requests are also welcome.
 
 ## License
 
