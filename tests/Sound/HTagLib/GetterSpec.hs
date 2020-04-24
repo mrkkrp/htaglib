@@ -8,7 +8,7 @@ spec :: Spec
 spec =
   describe "getters" $ do
     mapM_ (withFile $ const simpleGetter) fileList
-    mapM_ (withFile specializedGetter)    fileList
+    mapM_ (withFile specializedGetter) fileList
 
 simpleGetter :: AudioTags -> Expectation
 simpleGetter tags = do

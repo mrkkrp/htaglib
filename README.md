@@ -71,14 +71,15 @@ import Sound.HTagLib
 import System.Environment (getArgs)
 
 data AudioTrack = AudioTrack
-  { atTitle   :: Title
-  , atArtist  :: Artist
-  , atAlbum   :: Album
-  , atComment :: Comment
-  , atGenre   :: Genre
-  , atYear    :: Maybe Year
-  , atTrack   :: Maybe TrackNumber }
-  deriving Show
+  { atTitle :: Title,
+    atArtist :: Artist,
+    atAlbum :: Album,
+    atComment :: Comment,
+    atGenre :: Genre,
+    atYear :: Maybe Year,
+    atTrack :: Maybe TrackNumber
+  }
+  deriving (Show)
 ```
 
 A couple of notes here. We use unique types for every component of meta
@@ -102,14 +103,15 @@ entire `AudioTrack` for you using applicative style:
 
 ```haskell
 audioTrackGetter :: TagGetter AudioTrack
-audioTrackGetter = AudioTrack
-  <$> titleGetter
-  <*> artistGetter
-  <*> albumGetter
-  <*> commentGetter
-  <*> genreGetter
-  <*> yearGetter
-  <*> trackNumberGetter
+audioTrackGetter =
+  AudioTrack
+    <$> titleGetter
+    <*> artistGetter
+    <*> albumGetter
+    <*> commentGetter
+    <*> genreGetter
+    <*> yearGetter
+    <*> trackNumberGetter
 ```
 
 Perfect, now use `getTags` to read entire record:
@@ -117,7 +119,7 @@ Perfect, now use `getTags` to read entire record:
 ```haskell
 main :: IO ()
 main = do
-  path  <- head <$> getArgs
+  path <- head <$> getArgs
   track <- getTags path audioTrackGetter
   print track
 ```
@@ -127,13 +129,13 @@ For example (alignment is added):
 ```
 $ ./example "/home/mark/music/David Bowie/1977, Low/01 Speed of Life.flac"
 AudioTrack
-  { atTitle   = Title   "Speed of Life"
-  , atArtist  = Artist  "David Bowie"
-  , atAlbum   = Album   "Low"
-  , atComment = Comment ""
-  , atGenre   = Genre   ""
-  , atYear    = Just    (Year 1977)
-  , atTrack   = Just    (TrackNumber 1)
+  { atTitle = Title "Speed of Life",
+    atArtist = Artist "David Bowie",
+    atAlbum = Album "Low",
+    atComment = Comment "",
+    atGenre = Genre "",
+    atYear = Just (Year 1977),
+    atTrack = Just (TrackNumber 1)
   }
 ```
 
@@ -167,8 +169,8 @@ main :: IO ()
 main = do
   (path : title : artist : _) <- getArgs
   setTags path Nothing $
-    titleSetter (mkTitle title) <>
-    artistSetter (mkArtist artist)
+    titleSetter (mkTitle title)
+      <> artistSetter (mkArtist artist)
   track <- getTags path audioTrackGetter
   print track
 ```
