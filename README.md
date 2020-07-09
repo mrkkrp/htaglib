@@ -4,7 +4,7 @@
 [![Hackage](https://img.shields.io/hackage/v/htaglib.svg?style=flat)](https://hackage.haskell.org/package/htaglib)
 [![Stackage Nightly](http://stackage.org/package/htaglib/badge/nightly)](http://stackage.org/nightly/package/htaglib)
 [![Stackage LTS](http://stackage.org/package/htaglib/badge/lts)](http://stackage.org/lts/package/htaglib)
-[![Build Status](https://travis-ci.org/mrkkrp/htaglib.svg?branch=master)](https://travis-ci.org/mrkkrp/htaglib)
+![CI](https://github.com/mrkkrp/htaglib/workflows/CI/badge.svg?branch=master)
 
 * [Alternatives](#alternatives)
 * [A note for FLAC users](#a-note-for-flac-users)
