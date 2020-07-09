@@ -5,7 +5,7 @@ module Sound.HTagLib.SetterSpec (spec) where
 import Sound.HTagLib
 import Sound.HTagLib.Test.Util
 import System.Directory (copyFile, getTemporaryDirectory)
-import System.FilePath ((</>), takeFileName)
+import System.FilePath (takeFileName, (</>))
 import Test.Hspec
 
 spec :: Spec
