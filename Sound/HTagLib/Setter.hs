@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE RecordWildCards #-}
 
 -- |
@@ -34,10 +33,6 @@ import Control.Monad.IO.Class
 import Data.Foldable (forM_)
 import qualified Sound.HTagLib.Internal as I
 import Sound.HTagLib.Type
-
-#if !MIN_VERSION_base(4,13,0)
-import Data.Semigroup (Semigroup (..))
-#endif
 
 -- | A composable entity that can be used together with the 'setTags' or the
 -- 'setTags'' functions to write meta data to an audio file.
