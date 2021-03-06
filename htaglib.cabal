@@ -73,7 +73,7 @@ test-suite tests
         directory >=1.2 && <1.4,
         filepath >=1.4 && <2.0,
         hspec >=2.0 && <3.0,
-        htaglib -any
+        htaglib
 
     if flag(dev)
         ghc-options: -Wall -Werror
