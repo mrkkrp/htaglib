@@ -14,8 +14,8 @@
     * [Conclusion](#conclusion)
 * [License](#license)
 
-This is Haskell bindings to [TagLib](https://taglib.github.io/), library for
-reading and editing meta-data of several popular audio formats.
+This is Haskell bindings to [TagLib](https://taglib.github.io/), a library
+for reading and editing meta-data of several popular audio formats.
 
 It works with the following formats:
 
@@ -35,22 +35,21 @@ with format-specific functionality.
 
 ## Alternatives
 
-There is at least two Haskell bindings doing “the same” thing:
+There is at least two other Haskell bindings to TagLib:
 
 * [`libtagc`](https://hackage.haskell.org/package/libtagc)
 * [`taglib`](https://hackage.haskell.org/package/taglib)
 
-Both are very low level, without any protection or higher-level
-abstractions, not really type-safe. I personally don't want to use them, so
-I wrote this.
+Both are low level, without any type safety or higher-level abstractions.
 
 ## A note for FLAC users
 
 If you want to work with FLAC, there is a [complete Haskell
-binding](https://github.com/mrkkrp/flac) to `libFLAC`—reference FLAC
-implementation. It allows to work with all FLAC metadata (read and write)
-and also provides Haskell API to stream encoder and stream decoder. Please
-prefer that package if you don't need to work with other audio formats.
+binding](https://github.com/mrkkrp/flac) to `libFLAC`—the reference FLAC
+implementation. It allows us to work with all FLAC metadata (read and write)
+and also provides a Haskell API to the stream encoder and the stream
+decoder. Please prefer that package if you don't need to work with other
+audio formats.
 
 ## Quick start
 
@@ -82,15 +81,12 @@ data AudioTrack = AudioTrack
   deriving (Show)
 ```
 
-A couple of notes here. We use unique types for every component of meta
-data, so it's more difficult to use track title in lieu of track artist, for
-example. Meta data that is represented by strings also has smart
-constructors, they replace zero bytes with spaces, this is necessary to
-avoid troubles when your Haskell strings go to the C-level (well, zero-bytes
-in strings is rather edge case, but it should be mentioned). Of course,
-`Title`, `Artist`, `Album`, `Comment`, and `Genre` all are instances of
-`IsString`, so just turn on `OverloadedStrings` and you can use normal
-string literals to create data of these types.
+We use unique types for every component of meta data, so it's more difficult
+to use a track title instead of a track artist, for example. String meta
+data types have smart constructors, but `Title`, `Artist`, `Album`,
+`Comment`, and `Genre` all are instances of `IsString`, so it is enough to
+turn on the `OverloadedStrings` language extension to use normal string
+literals to create values of these types.
 
 `Year` and `TrackNumber` may be not set or missing, in this case you get
 `Nothing`. This is possible with string-based fields too, but in that case
@@ -99,7 +95,7 @@ that make sure that the values are positive (i.e. zero is not allowed).
 
 OK, it's time to read some info. There is `TagGetter` type which is an
 applicative functor. You first construct `TagGetter` which will retrieve
-entire `AudioTrack` for you using applicative style:
+entire `AudioTrack` for you using the applicative style:
 
 ```haskell
 audioTrackGetter :: TagGetter AudioTrack
@@ -114,7 +110,7 @@ audioTrackGetter =
     <*> trackNumberGetter
 ```
 
-Perfect, now use `getTags` to read entire record:
+Perfect, now use `getTags` to read the entire record:
 
 ```haskell
 main :: IO ()
@@ -143,26 +139,18 @@ Success! It's also possible to extract audio properties like sample rate,
 etc. but it's not shown here for simplicity, consult Haddocks for more
 information.
 
-N.B. If you need to extract duration of tracks, TagLib only returns number
-of seconds as an integer. This means that if you want to calculate total
-duration, you'll have slightly incorrect result. Proper solution is to
-extract duration as floating-point number, for that we recommend bindings to
+N.B. If you need to extract the duration, TagLib only returns the number of
+seconds as an integer. This means that if you want to calculate the total
+duration of an album, you'll get a slightly incorrect result. The right
+solution is to extract the duration as floating-point number, for that we
+recommend the bindings to
 `libsndfile`—[`hsndfile`](https://hackage.haskell.org/package/hsndfile) (or
 the above-mentioned `flac` package for Haskell if you work with FLAC).
 
 ### Writing meta data
 
-We cannot use applicative interface to set tags. There are several reasons:
-
-* Applicative interface in general is better for extracting or parsing (or
-  rather assembling complex parsers from more basic ones).
-
-* Some fields like sample rate or length can only be read, not set.
-
-* We may wish to set one or two fields selectively, not everything.
-
-Solution: use monoids. `TagSetter` is an instance of `Monoid`. This means
-that we can set title and artist of audio track like this:
+`TagSetter` is an instance of `Monoid`. This means that we can set title and
+artist of audio track like this:
 
 ```haskell
 main :: IO ()
@@ -175,14 +163,8 @@ main = do
   print track
 ```
 
-This code loads file and changes “title” and “artist” meta data fields.
-
-## Conclusion
-
-With the interface provided by `getTags` and `setTags` it's not possible to
-forget to close file or free some resource. You can read all meta data at
-once directly into your data structure in type-safe manner. Writing meta
-data should be trivial too. Have fun!
+This code loads a file and changes the “title” and “artist” meta data
+fields.
 
 ## Contribution
 

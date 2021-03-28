@@ -63,7 +63,7 @@ newtype Title = Title Text deriving (Show, Eq, Ord)
 instance IsString Title where
   fromString = mkTitle . fromString
 
--- | Construction of 'Title' type, null bytes are converted to spaces.
+-- | Construction of 'Title' values, null bytes are converted to spaces.
 mkTitle :: Text -> Title
 mkTitle = Title . avoidNulls
 
@@ -77,7 +77,7 @@ newtype Artist = Artist Text deriving (Show, Eq, Ord)
 instance IsString Artist where
   fromString = mkArtist . fromString
 
--- | Construction of 'Artist' type, null bytes are converted to spaces.
+-- | Construction of 'Artist' values, null bytes are converted to spaces.
 mkArtist :: Text -> Artist
 mkArtist = Artist . avoidNulls
 
@@ -91,7 +91,7 @@ newtype Album = Album Text deriving (Show, Eq, Ord)
 instance IsString Album where
   fromString = mkAlbum . fromString
 
--- | Construction of 'Album' type, null bytes are converted to spaces.
+-- | Construction of 'Album' values, null bytes are converted to spaces.
 mkAlbum :: Text -> Album
 mkAlbum = Album . avoidNulls
 
@@ -105,7 +105,7 @@ newtype Comment = Comment Text deriving (Show, Eq, Ord)
 instance IsString Comment where
   fromString = mkComment . fromString
 
--- | Construction of 'Comment' type, null bytes are converted to spaces.
+-- | Construction of 'Comment' values, null bytes are converted to spaces.
 mkComment :: Text -> Comment
 mkComment = Comment . avoidNulls
 
@@ -119,7 +119,7 @@ newtype Genre = Genre Text deriving (Show, Eq, Ord)
 instance IsString Genre where
   fromString = mkGenre . fromString
 
--- | Construction of 'Genre' type, null bytes are converted to spaces.
+-- | Construction of 'Genre' values, null bytes are converted to spaces.
 mkGenre :: Text -> Genre
 mkGenre = Genre . avoidNulls
 
@@ -130,7 +130,7 @@ unGenre (Genre x) = x
 -- | Year tag.
 newtype Year = Year Int deriving (Show, Eq, Ord)
 
--- | Construction of 'Year' type, non-positive values result in 'Nothing'.
+-- | Construction of 'Year' values, non-positive values result in 'Nothing'.
 mkYear :: Int -> Maybe Year
 mkYear = fmap Year . atLeast 1
 
@@ -141,7 +141,7 @@ unYear (Year x) = x
 -- | Track number tag.
 newtype TrackNumber = TrackNumber Int deriving (Show, Eq, Ord)
 
--- | Construction of 'TrackNumber' type, non-positive values result in
+-- | Construction of 'TrackNumber' values, non-positive values result in
 -- 'Nothing'.
 mkTrackNumber :: Int -> Maybe TrackNumber
 mkTrackNumber = fmap TrackNumber . atLeast 1
@@ -164,8 +164,7 @@ unDuration (Duration x) = x
 -- | Bit rate in kb/s.
 newtype BitRate = BitRate Int deriving (Show, Eq, Ord)
 
--- | Construction of 'BitRate' values, negative values result in
--- 'Nothing'.
+-- | Construction of 'BitRate' values, negative values result in 'Nothing'.
 mkBitRate :: Int -> Maybe BitRate
 mkBitRate = fmap BitRate . atLeast 0
 
@@ -202,13 +201,13 @@ avoidNulls :: Text -> Text
 avoidNulls = T.replace "\0" " "
 
 -- | @atLeast a b@ returns @Just b@ is @b@ is greater or equal to @a@,
--- otherwise result is @Nothing@.
+-- otherwise the result is @Nothing@.
 atLeast :: Int -> Int -> Maybe Int
 atLeast a b = if b >= a then Just b else Nothing
 
--- | Types of files TagLib can work with. This may be used to explicitly
--- specify type of file instead of relying on the TagLib's ability to guess
--- type of file from its extension.
+-- | The types of files TagLib can work with. This may be used to explicitly
+-- specify the type of a file instead of relying on the TagLib's ability to
+-- guess the type of a file from its extension.
 data FileType
   = -- | MPEG
     MPEG
@@ -246,9 +245,9 @@ data ID3v2Encoding
 
 -- | The data type represents exceptions specific to the library.
 data HTagLibException
-  = -- | Attempt to open audio file to read its tags failed
+  = -- | An attempt to open an audio file to read its tags failed
     OpeningFailed FilePath
-  | -- | File can be opened, but it doesn't contain any information that can
+  | -- | The file can be opened, but it doesn't contain any information that can
     -- be interpreted by the library
     InvalidFile FilePath
   | -- | Saving failed

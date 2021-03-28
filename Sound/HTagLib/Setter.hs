@@ -9,8 +9,8 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- A high-level interface for writing audio meta data. You don't need to
--- import this module directly, import "Sound.HTagLib" instead.
+-- An interface for writing audio meta data. You don't need to import this
+-- module directly, import "Sound.HTagLib" instead.
 module Sound.HTagLib.Setter
   ( -- * High-level API
     TagSetter,
@@ -79,9 +79,9 @@ instance Monoid TagSetter where
       }
   mappend = (<>)
 
--- | Set tags in specified file using the given setter.
+-- | Set tags in a specified file using the given setter.
 --
--- In the case of trouble 'I.HTagLibException' will be thrown.
+-- Throws 'I.HTagLibException'.
 setTags ::
   MonadIO m =>
   -- | Path to audio file
@@ -93,8 +93,8 @@ setTags ::
   m ()
 setTags path enc = execSetter path enc Nothing
 
--- | Similar to 'setTags', but you can also specify type of audio file
--- explicitly (otherwise it's guessed from file extension).
+-- | Similar to 'setTags', but you can also specify the type of the audio
+-- file explicitly (otherwise it's guessed from the file extension).
 setTags' ::
   MonadIO m =>
   -- | Path to audio file
@@ -133,30 +133,30 @@ execSetter path enc t TagSetter {..} = liftIO . I.withFile path t $ \fid -> do
   writeTag sdTrackNumber I.setTrackNumber
   I.saveFile path fid
 
--- | Setter for track title.
+-- | Setter for the track title.
 titleSetter :: Title -> TagSetter
 titleSetter x = mempty {sdTitle = Just x}
 
--- | Setter for track artist.
+-- | Setter for the track artist.
 artistSetter :: Artist -> TagSetter
 artistSetter x = mempty {sdArtist = Just x}
 
--- | Setter for track album.
+-- | Setter for the track album.
 albumSetter :: Album -> TagSetter
 albumSetter x = mempty {sdAlbum = Just x}
 
--- | Setter for track comment.
+-- | Setter for the track comment.
 commentSetter :: Comment -> TagSetter
 commentSetter x = mempty {sdComment = Just x}
 
--- | Setter for track genre.
+-- | Setter for the track genre.
 genreSetter :: Genre -> TagSetter
 genreSetter x = mempty {sdGenre = Just x}
 
--- | Setter for year tag, use 'Nothing' to clear the field.
+-- | Setter for the year tag, use 'Nothing' to clear the field.
 yearSetter :: Maybe Year -> TagSetter
 yearSetter x = mempty {sdYear = Just x}
 
--- | Setter for track number, use 'Nothing' to clear the field.
+-- | Setter for the track number, use 'Nothing' to clear the field.
 trackNumberSetter :: Maybe TrackNumber -> TagSetter
 trackNumberSetter x = mempty {sdTrackNumber = Just x}

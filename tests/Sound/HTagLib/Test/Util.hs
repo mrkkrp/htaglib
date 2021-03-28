@@ -90,7 +90,7 @@ fileList =
     )
   ]
 
--- | Call given function with provided data.
+-- | Call a given function with the provided data.
 withFile ::
   (FileType -> AudioTags -> Expectation) ->
   (FileType, AudioTags) ->
@@ -99,14 +99,14 @@ withFile f (t, tags) = it name (f t tags)
   where
     name = "using file: " ++ show (atFileName tags) ++ " (" ++ show t ++ ")"
 
--- | Create an expectation that two collections of tags match. However, if
--- bit rate of the first is zero (which is the case with older versions of
--- TagLib when it's used with such short files as our samples), allow bit
--- rate values differ.
+-- | Create an expectation that the two collections of tags match. However,
+-- if the bit rate in the first collection is zero (which is the case with
+-- the older versions of TagLib when it's used with such short files as our
+-- samples), allow bit rate values to differ.
 shouldMatchTags ::
   -- | Tags to test
   AudioTags ->
-  -- | Correct tags to test against
+  -- | The value to test against
   AudioTags ->
   Expectation
 shouldMatchTags given expected =

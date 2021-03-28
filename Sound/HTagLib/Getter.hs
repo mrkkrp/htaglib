@@ -9,9 +9,8 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- A high-level applicative interface for reading of audio meta data. You
--- don't need to import this module directly, import "Sound.HTagLib"
--- instead.
+-- An applicative interface for reading of audio meta data. You don't need
+-- to import this module directly, import "Sound.HTagLib" instead.
 module Sound.HTagLib.Getter
   ( -- * High-level API
     TagGetter,
@@ -37,24 +36,24 @@ import Control.Monad.IO.Class
 import qualified Sound.HTagLib.Internal as I
 import Sound.HTagLib.Type
 
--- | A composable entity that can be used with 'getTags' or 'getTags''
--- functions to read batch of meta parameters.
+-- | A composable entity that can be passed to the 'getTags' or 'getTags''
+-- functions to read multiple meta data fields at once.
 newtype TagGetter a = TagGetter {runGetter :: I.FileId -> IO a}
   deriving (Functor)
 
 instance Applicative TagGetter where
   pure = TagGetter . const . return
-  x <*> y = TagGetter $ \fid ->
-    do
-      f <- runGetter x fid
-      f <$> runGetter y fid
+  x <*> y = TagGetter $ \fid -> do
+    f <- runGetter x fid
+    f <$> runGetter y fid
 
--- | @getTags path g@ will try to read file located at @path@ and read meta
--- data of the file using getter @g@. Type of file will be guessed from its
--- extension. If this is not satisfactory and you want to explicitly specify
--- the file type, see 'getTags'' variation of this function.
+-- | @getTags path g@ will try to read the file located at @path@ and read
+-- the meta data of the file using the getter @g@. The type of the file will
+-- be guessed from its extension. If this is not satisfactory and you want
+-- to explicitly specify the file type, see 'getTags'' variation of this
+-- function.
 --
--- In the case of trouble 'I.HTagLibException' will be thrown.
+-- Throws 'I.HTagLibException'.
 getTags ::
   MonadIO m =>
   -- | Path to audio file
@@ -65,7 +64,7 @@ getTags ::
   m a
 getTags path = execGetter path Nothing
 
--- | This is essentially the same as 'getTags', but allows to explicitly
+-- | This is essentially the same as 'getTags', but allows us to explicitly
 -- choose file type (see 'FileType').
 getTags' ::
   MonadIO m =>
@@ -93,48 +92,48 @@ execGetter ::
   m a
 execGetter path t = liftIO . I.withFile path t . runGetter
 
--- | Getter to retrieve track title.
+-- | Getter to retrieve the track title.
 titleGetter :: TagGetter Title
 titleGetter = TagGetter I.getTitle
 
--- | Getter to retrieve track artist.
+-- | Getter to retrieve the track artist.
 artistGetter :: TagGetter Artist
 artistGetter = TagGetter I.getArtist
 
--- | Getter to retrieve track album.
+-- | Getter to retrieve the track album.
 albumGetter :: TagGetter Album
 albumGetter = TagGetter I.getAlbum
 
--- | Getter to retrieve track comment.
+-- | Getter to retrieve the track comment.
 commentGetter :: TagGetter Comment
 commentGetter = TagGetter I.getComment
 
--- | Getter to retrieve genre of the track.
+-- | Getter to retrieve the genre of the track.
 genreGetter :: TagGetter Genre
 genreGetter = TagGetter I.getGenre
 
--- | Getter to retrieve year to the track (returns 'Nothing' if the data is
--- missing).
+-- | Getter to retrieve the year of the track (returns 'Nothing' if the data
+-- is missing).
 yearGetter :: TagGetter (Maybe Year)
 yearGetter = TagGetter I.getYear
 
--- | Getter to retrieve track number (returns 'Nothing' if the data is
+-- | Getter to retrieve the track number (returns 'Nothing' if the data is
 -- missing).
 trackNumberGetter :: TagGetter (Maybe TrackNumber)
 trackNumberGetter = TagGetter I.getTrackNumber
 
--- | Getter to retrieve duration in seconds.
+-- | Getter to retrieve the duration in seconds.
 durationGetter :: TagGetter Duration
 durationGetter = TagGetter I.getDuration
 
--- | Getter to retrieve bit rate.
+-- | Getter to retrieve the bit rate.
 bitRateGetter :: TagGetter BitRate
 bitRateGetter = TagGetter I.getBitRate
 
--- | Getter to retrieve sample rate.
+-- | Getter to retrieve the sample rate.
 sampleRateGetter :: TagGetter SampleRate
 sampleRateGetter = TagGetter I.getSampleRate
 
--- | Getter to retrieve number of channels in audio data.
+-- | Getter to retrieve the number of channels of the audio data.
 channelsGetter :: TagGetter Channels
 channelsGetter = TagGetter I.getChannels
