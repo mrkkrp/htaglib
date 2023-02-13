@@ -83,7 +83,7 @@ instance Monoid TagSetter where
 --
 -- Throws 'I.HTagLibException'.
 setTags ::
-  MonadIO m =>
+  (MonadIO m) =>
   -- | Path to audio file
   FilePath ->
   -- | Encoding for ID3v2 frames
@@ -96,7 +96,7 @@ setTags path enc = execSetter path enc Nothing
 -- | Similar to 'setTags', but you can also specify the type of the audio
 -- file explicitly (otherwise it's guessed from the file extension).
 setTags' ::
-  MonadIO m =>
+  (MonadIO m) =>
   -- | Path to audio file
   FilePath ->
   -- | Encoding for ID3v2 frames
@@ -111,7 +111,7 @@ setTags' path enc t = execSetter path enc (Just t)
 -- | The most general way to set meta data. 'setTags' and 'setTags'' are
 -- just wrappers around this function.
 execSetter ::
-  MonadIO m =>
+  (MonadIO m) =>
   -- | Path to audio file
   FilePath ->
   -- | Encoding for ID3v2 frames
