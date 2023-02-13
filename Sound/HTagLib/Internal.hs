@@ -331,7 +331,7 @@ getStrValue getStr (FileId ptr) = do
   return (decodeUtf8 result)
 
 getIntValue ::
-  Integral a =>
+  (Integral a) =>
   -- | How to get a value from the resource
   (Ptr TagLibTag -> IO a) ->
   -- | File ID
@@ -357,7 +357,7 @@ setStrValue setStr str (FileId ptr) = do
     setStr tag cstr
 
 setIntValue ::
-  Integral a =>
+  (Integral a) =>
   -- | Setting routine
   (Ptr TagLibTag -> a -> IO ()) ->
   -- | New value
@@ -370,7 +370,7 @@ setIntValue setUInt int (FileId ptr) = do
   setUInt tag (maybe 0 fromIntegral int)
 
 getIntProperty ::
-  Integral a =>
+  (Integral a) =>
   -- | How to get a value from the resource
   (Ptr TagLibProperties -> IO a) ->
   -- | File ID
@@ -383,5 +383,5 @@ getIntProperty getInt (FileId ptr) = do
   return (fromIntegral value)
 
 -- | Convert a Haskell enumeration to a C enumeration (an integer).
-enumToCInt :: Enum a => a -> CInt
+enumToCInt :: (Enum a) => a -> CInt
 enumToCInt = fromIntegral . fromEnum

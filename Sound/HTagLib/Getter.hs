@@ -55,7 +55,7 @@ instance Applicative TagGetter where
 --
 -- Throws 'I.HTagLibException'.
 getTags ::
-  MonadIO m =>
+  (MonadIO m) =>
   -- | Path to audio file
   FilePath ->
   -- | Getter
@@ -67,7 +67,7 @@ getTags path = execGetter path Nothing
 -- | This is essentially the same as 'getTags', but allows us to explicitly
 -- choose file type (see 'FileType').
 getTags' ::
-  MonadIO m =>
+  (MonadIO m) =>
   -- | Path to audio file
   FilePath ->
   -- | Type of audio file
@@ -81,7 +81,7 @@ getTags' path t = execGetter path (Just t)
 -- | This is the most general way to read meta data from file. 'getTags' and
 -- 'getTags'' are just wrappers around the function.
 execGetter ::
-  MonadIO m =>
+  (MonadIO m) =>
   -- | Path to audio file
   FilePath ->
   -- | Type of audio file (if known)
