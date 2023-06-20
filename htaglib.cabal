@@ -44,7 +44,7 @@ library
         base >=4.15 && <5.0,
         bytestring >=0.9 && <0.12,
         text >=1.0 && <2.1,
-        transformers >=0.4 && <0.6
+        transformers >=0.4 && <0.7
 
     if flag(dev)
         ghc-options: -Wall -Werror
