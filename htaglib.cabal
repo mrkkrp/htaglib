@@ -43,19 +43,15 @@ library
     build-depends:
         base >=4.15 && <5.0,
         bytestring >=0.9 && <0.12,
-        text >=1.0 && <2.1,
-        transformers >=0.4 && <0.7
-
-    if flag(dev)
-        ghc-options: -Wall -Werror
-
-    else
-        ghc-options: -O2 -Wall
+        text >=1.0 && <2.1
 
     if flag(dev)
         ghc-options:
-            -Wcompat -Wincomplete-record-updates -Wincomplete-uni-patterns
-            -Wnoncanonical-monad-instances
+            -Wall -Werror -Wredundant-constraints -Wpartial-fields
+            -Wunused-packages
+
+    else
+        ghc-options: -O2 -Wall
 
 test-suite tests
     type:             exitcode-stdio-1.0
@@ -76,7 +72,9 @@ test-suite tests
         htaglib
 
     if flag(dev)
-        ghc-options: -Wall -Werror
+        ghc-options:
+            -Wall -Werror -Wredundant-constraints -Wpartial-fields
+            -Wunused-packages
 
     else
         ghc-options: -O2 -Wall
