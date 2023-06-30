@@ -54,7 +54,7 @@ where
 import Control.Exception (Exception)
 import Data.String
 import Data.Text (Text)
-import qualified Data.Text as T
+import Data.Text qualified as T
 import Data.Typeable (Typeable)
 
 -- | Title tag.
