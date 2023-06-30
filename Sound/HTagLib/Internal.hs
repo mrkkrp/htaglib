@@ -55,7 +55,7 @@ import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import Foreign
 import Foreign.C.String
 import Foreign.C.Types
-import qualified Sound.HTagLib.Type as T
+import Sound.HTagLib.Type qualified as T
 
 data TagLibFile
 

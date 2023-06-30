@@ -33,7 +33,7 @@ module Sound.HTagLib.Getter
 where
 
 import Control.Monad.IO.Class
-import qualified Sound.HTagLib.Internal as I
+import Sound.HTagLib.Internal qualified as I
 import Sound.HTagLib.Type
 
 -- | A composable entity that can be passed to the 'getTags' or 'getTags''
