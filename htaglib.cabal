@@ -54,16 +54,16 @@ library
         ghc-options: -O2 -Wall
 
 test-suite tests
-    type:             exitcode-stdio-1.0
-    main-is:          Spec.hs
-    build-tools:      hspec-discover >=2 && <3
-    hs-source-dirs:   tests
+    type:               exitcode-stdio-1.0
+    main-is:            Spec.hs
+    build-tool-depends: hspec-discover:hspec-discover >=2 && <3
+    hs-source-dirs:     tests
     other-modules:
         Sound.HTagLib.GetterSpec
         Sound.HTagLib.SetterSpec
         Sound.HTagLib.Test.Util
 
-    default-language: GHC2021
+    default-language:   GHC2021
     build-depends:
         base >=4.15 && <5,
         directory >=1.2 && <1.4,
