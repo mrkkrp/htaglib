@@ -42,7 +42,7 @@ library
     extra-libraries:  tag_c
     build-depends:
         base >=4.15 && <5,
-        bytestring >=0.9 && <0.12,
+        bytestring >=0.9 && <0.13,
         text >=1 && <2.2
 
     if flag(dev)
