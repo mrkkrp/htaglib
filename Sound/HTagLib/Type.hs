@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 -- |
@@ -55,7 +54,6 @@ import Control.Exception (Exception)
 import Data.String
 import Data.Text (Text)
 import Data.Text qualified as T
-import Data.Typeable (Typeable)
 
 -- | Title tag.
 newtype Title = Title Text deriving (Show, Eq, Ord)
@@ -252,6 +250,6 @@ data HTagLibException
     InvalidFile FilePath
   | -- | Saving failed
     SavingFailed FilePath
-  deriving (Eq, Show, Typeable)
+  deriving (Eq, Show)
 
 instance Exception HTagLibException
