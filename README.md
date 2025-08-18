@@ -11,7 +11,7 @@
 * [Quick start](#quick-start)
     * [Reading meta data](#reading-meta-data)
     * [Writing meta data](#writing-meta-data)
-    * [Conclusion](#conclusion)
+* [Contribution](#contribution)
 * [License](#license)
 
 This is Haskell bindings to [TagLib](https://taglib.github.io/), a library
