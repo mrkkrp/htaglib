@@ -24,6 +24,7 @@ module Sound.HTagLib
     bitRateGetter,
     sampleRateGetter,
     channelsGetter,
+    propertyGetter,
 
     -- * Setters
     setTags,
@@ -35,6 +36,7 @@ module Sound.HTagLib
     genreSetter,
     yearSetter,
     trackNumberSetter,
+    propertySetter,
 
     -- * Data types
     Title,
