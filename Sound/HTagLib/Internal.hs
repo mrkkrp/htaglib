@@ -43,6 +43,11 @@ module Sound.HTagLib.Internal
 
     -- * Special convenience ID3v2 functions
     id3v2SetEncoding,
+
+    -- * Properties API
+    propertySet,
+    propertySetAppend,
+    propertyGet,
   )
 where
 
@@ -161,6 +166,21 @@ foreign import ccall unsafe "taglib/tag_c.h taglib_audioproperties_channels"
 
 foreign import ccall unsafe "taglib/tag_c.h taglib_id3v2_set_default_text_encoding"
   c_taglib_id3v2_set_default_text_encoding :: CInt -> IO ()
+
+----------------------------------------------------------------------------
+-- Properties API
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_property_set"
+  c_taglib_property_set :: Ptr TagLibFile -> CString -> CString -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_property_set_append"
+  c_taglib_property_set_append :: Ptr TagLibFile -> CString -> CString -> IO ()
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_property_get"
+  c_taglib_property_get :: Ptr TagLibFile -> CString -> IO (Ptr CString)
+
+foreign import ccall unsafe "taglib/tag_c.h taglib_property_free"
+  c_taglib_property_free :: Ptr CString -> IO ()
 
 ----------------------------------------------------------------------------
 -- File API
@@ -312,6 +332,43 @@ getChannels =
 -- | Set the default encoding for ID3v2 frames.
 id3v2SetEncoding :: T.ID3v2Encoding -> IO ()
 id3v2SetEncoding = c_taglib_id3v2_set_default_text_encoding . enumToCInt
+
+----------------------------------------------------------------------------
+-- Properties API
+
+propertySet :: Text -> Maybe Text -> FileId -> IO ()
+propertySet = propertySetHelper c_taglib_property_set
+
+propertySetAppend :: Text -> Maybe Text -> FileId -> IO ()
+propertySetAppend = propertySetHelper c_taglib_property_set_append
+
+propertySetHelper ::
+  (Ptr TagLibFile -> CString -> CString -> IO ()) ->
+  Text ->
+  Maybe Text ->
+  FileId ->
+  IO ()
+propertySetHelper f prop mvalue (FileId ptr) =
+  useAsCString (encodeUtf8 prop) $ \cprop ->
+    case mvalue of
+      Nothing -> f ptr cprop nullPtr
+      Just value -> useAsCString (encodeUtf8 value) $ f ptr cprop
+
+propertyGet :: Text -> FileId -> IO [Text]
+propertyGet prop (FileId ptr) =
+  useAsCString (encodeUtf8 prop) $ \cprop ->
+    bracket
+      (c_taglib_property_get ptr cprop)
+      c_taglib_property_free
+      (ppCharToTexts [])
+  where
+    ppCharToTexts texts ppchar = do
+      pchar <- peek ppchar
+      if pchar == nullPtr
+        then return (reverse texts)
+        else do
+          text <- decodeUtf8 <$> packCString pchar
+          ppCharToTexts (text : texts) (advancePtr ppchar 1)
 
 ----------------------------------------------------------------------------
 -- Helpers
