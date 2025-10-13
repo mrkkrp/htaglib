@@ -362,13 +362,15 @@ propertyGet prop (FileId ptr) =
       c_taglib_property_free
       (ppCharToTexts [])
   where
-    ppCharToTexts texts ppchar = do
-      pchar <- peek ppchar
-      if pchar == nullPtr
-        then return (reverse texts)
-        else do
-          text <- decodeUtf8 <$> packCString pchar
-          ppCharToTexts (text : texts) (advancePtr ppchar 1)
+    ppCharToTexts texts ppchar
+      | ppchar == nullPtr = return (reverse texts)
+      | otherwise = do
+          pchar <- peek ppchar
+          if pchar == nullPtr
+            then return (reverse texts)
+            else do
+              text <- decodeUtf8 <$> packCString pchar
+              ppCharToTexts (text : texts) (advancePtr ppchar 1)
 
 ----------------------------------------------------------------------------
 -- Helpers
