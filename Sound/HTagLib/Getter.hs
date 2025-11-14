@@ -29,10 +29,12 @@ module Sound.HTagLib.Getter
     bitRateGetter,
     sampleRateGetter,
     channelsGetter,
+    propertyGetter,
   )
 where
 
 import Control.Monad.IO.Class
+import Data.Text (Text)
 import Sound.HTagLib.Internal qualified as I
 import Sound.HTagLib.Type
 
@@ -137,3 +139,7 @@ sampleRateGetter = TagGetter I.getSampleRate
 -- | Getter to retrieve the number of channels of the audio data.
 channelsGetter :: TagGetter Channels
 channelsGetter = TagGetter I.getChannels
+
+-- | Getter to retrieve a property by its name.
+propertyGetter :: Text -> TagGetter [Text]
+propertyGetter = TagGetter . I.propertyGet
