@@ -25,12 +25,14 @@ module Sound.HTagLib.Setter
     genreSetter,
     yearSetter,
     trackNumberSetter,
+    propertySetter,
   )
 where
 
 import Control.Applicative ((<|>))
 import Control.Monad.IO.Class
 import Data.Foldable (forM_)
+import Data.Text (Text)
 import Sound.HTagLib.Internal qualified as I
 import Sound.HTagLib.Type
 
@@ -49,7 +51,8 @@ data TagSetter = TagSetter
     sdComment :: Maybe Comment,
     sdGenre :: Maybe Genre,
     sdYear :: Maybe (Maybe Year),
-    sdTrackNumber :: Maybe (Maybe TrackNumber)
+    sdTrackNumber :: Maybe (Maybe TrackNumber),
+    sdProperties :: [(Text, [Text])]
   }
 
 -- | @since 1.2.0
@@ -63,7 +66,8 @@ instance Semigroup TagSetter where
             sdComment = f sdComment,
             sdGenre = f sdGenre,
             sdYear = f sdYear,
-            sdTrackNumber = f sdTrackNumber
+            sdTrackNumber = f sdTrackNumber,
+            sdProperties = f sdProperties
           }
 
 instance Monoid TagSetter where
@@ -75,7 +79,8 @@ instance Monoid TagSetter where
         sdComment = Nothing,
         sdGenre = Nothing,
         sdYear = Nothing,
-        sdTrackNumber = Nothing
+        sdTrackNumber = Nothing,
+        sdProperties = []
       }
   mappend = (<>)
 
@@ -131,7 +136,13 @@ execSetter path enc t TagSetter {..} = liftIO . I.withFile path t $ \fid -> do
   writeTag sdGenre I.setGenre
   writeTag sdYear I.setYear
   writeTag sdTrackNumber I.setTrackNumber
+  forM_ sdProperties (writeProperty fid)
   I.saveFile path fid
+  where
+    writeProperty fid (k, []) = I.propertySet k Nothing fid
+    writeProperty fid (k, v : vs) = do
+      I.propertySet k (Just v) fid
+      forM_ vs $ \v' -> I.propertySetAppend k (Just v') fid
 
 -- | Setter for the track title.
 titleSetter :: Title -> TagSetter
@@ -160,3 +171,7 @@ yearSetter x = mempty {sdYear = Just x}
 -- | Setter for the track number, use 'Nothing' to clear the field.
 trackNumberSetter :: Maybe TrackNumber -> TagSetter
 trackNumberSetter x = mempty {sdTrackNumber = Just x}
+
+-- | Setter for a property with a given key, use an empty list to clear it.
+propertySetter :: Text -> [Text] -> TagSetter
+propertySetter k v = mempty {sdProperties = [(k, v)]}

@@ -11,6 +11,7 @@ module Sound.HTagLib.Test.Util
 where
 
 import Data.Maybe (fromJust)
+import Data.Text (Text)
 import Sound.HTagLib
 import Test.Hspec
 
@@ -26,7 +27,8 @@ data AudioTags = AudioTags
     atDuration :: Duration,
     atBitRate :: BitRate,
     atSampleRate :: SampleRate,
-    atChannels :: Channels
+    atChannels :: Channels,
+    atAlbumArtistProperty :: [Text]
   }
   deriving (Show, Eq)
 
@@ -45,6 +47,7 @@ sampleGetter path =
     <*> bitRateGetter
     <*> sampleRateGetter
     <*> channelsGetter
+    <*> propertyGetter "ALBUMARTIST"
 
 sampleSetter :: TagSetter
 sampleSetter =
@@ -56,6 +59,7 @@ sampleSetter =
     <> genreSetter (mkGenre "genre'")
     <> yearSetter (mkYear 2056)
     <> trackNumberSetter (mkTrackNumber 8)
+    <> propertySetter "ALBUMARTIST" ["albumartist'"]
 
 sampleTags :: AudioTags
 sampleTags =
@@ -71,7 +75,8 @@ sampleTags =
       atDuration = fromJust $ mkDuration 0,
       atBitRate = fromJust $ mkBitRate 0,
       atSampleRate = fromJust $ mkSampleRate 44100,
-      atChannels = fromJust $ mkChannels 2
+      atChannels = fromJust $ mkChannels 2,
+      atAlbumArtistProperty = ["albumartist"]
     }
 
 fileList :: [(FileType, AudioTags)]
