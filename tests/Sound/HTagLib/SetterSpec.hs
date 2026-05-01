@@ -29,7 +29,8 @@ updateSampleTags tags =
       atComment = mkComment "comment'",
       atGenre = mkGenre "genre'",
       atYear = mkYear 2056,
-      atTrackNumber = mkTrackNumber 8
+      atTrackNumber = mkTrackNumber 8,
+      atAlbumArtistProperty = ["albumartist'"]
     }
 
 simpleSetter :: AudioTags -> Expectation

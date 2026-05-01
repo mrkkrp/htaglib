@@ -69,7 +69,8 @@ test-suite tests
         directory >=1.2 && <1.4,
         filepath >=1.4 && <2,
         hspec >=2 && <3,
-        htaglib
+        htaglib,
+        text >=1 && <2.2
 
     if flag(dev)
         ghc-options:
