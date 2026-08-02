@@ -198,7 +198,7 @@ unChannels (Channels x) = x
 avoidNulls :: Text -> Text
 avoidNulls = T.replace "\0" " "
 
--- | @atLeast a b@ returns @Just b@ is @b@ is greater or equal to @a@,
+-- | @atLeast a b@ returns @Just b@ if @b@ is greater than or equal to @a@,
 -- otherwise the result is @Nothing@.
 atLeast :: Int -> Int -> Maybe Int
 atLeast a b = if b >= a then Just b else Nothing

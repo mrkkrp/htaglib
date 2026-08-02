@@ -81,7 +81,7 @@ instance Monoid TagSetter where
 
 -- | Set tags in a specified file using the given setter.
 --
--- Throws 'I.HTagLibException'.
+-- Throws 'HTagLibException'.
 setTags ::
   (MonadIO m) =>
   -- | Path to audio file

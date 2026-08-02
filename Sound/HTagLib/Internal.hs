@@ -63,7 +63,7 @@ data TagLibTag
 
 data TagLibProperties
 
--- | This is an abstraction representing opened file. Other modules can
+-- | This is an abstraction representing an opened file. Other modules can
 -- pass it around and treat it like a black box.
 newtype FileId = FileId (Ptr TagLibFile)
 
@@ -166,7 +166,7 @@ foreign import ccall unsafe "taglib/tag_c.h taglib_id3v2_set_default_text_encodi
 -- File API
 
 -- | Open an audio file and return its ID (an opaque type that the rest of
--- library can pass around).
+-- the library can pass around).
 --
 -- Throws 'IOException'.
 newFile ::
@@ -189,7 +189,7 @@ newFile path ftype = do
     throw (T.InvalidFile path)
   return (FileId ptr)
 
--- | Free file given its ID. Every time you open a file, free it.
+-- | Free a file given its ID. Every time you open a file, free it.
 freeFile :: FileId -> IO ()
 freeFile (FileId ptr) = c_taglib_file_free ptr
 
@@ -200,15 +200,15 @@ withFile ::
   FilePath ->
   -- | Type of file (or it will be guessed)
   Maybe T.FileType ->
-  -- | Computation depending of 'FileId'
+  -- | Computation depending on 'FileId'
   (FileId -> IO a) ->
   -- | Result value
   IO a
 withFile path t = bracket (newFile path t) freeFile
 
--- | Save the file given its ID. Given 'FilePath' just tells what to mention
--- in the exception messages if the action fails, it doesn't specify where
--- to save the file (it's determined by the 'FileId').
+-- | Save the file given its ID. The given 'FilePath' just tells what to
+-- mention in the exception messages if the action fails; it doesn't specify
+-- where to save the file (it's determined by the 'FileId').
 saveFile ::
   -- | File name to use in exceptions
   FilePath ->

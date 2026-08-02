@@ -14,7 +14,7 @@
 * [Contribution](#contribution)
 * [License](#license)
 
-This is Haskell bindings to [TagLib](https://taglib.github.io/), a library
+These are Haskell bindings to [TagLib](https://taglib.github.io/), a library
 for reading and editing meta-data of several popular audio formats.
 
 It works with the following formats:
@@ -35,7 +35,7 @@ with format-specific functionality.
 
 ## Alternatives
 
-There is at least two other Haskell bindings to TagLib:
+There are at least two other Haskell bindings to TagLib:
 
 * [`libtagc`](https://hackage.haskell.org/package/libtagc)
 * [`taglib`](https://hackage.haskell.org/package/taglib)
@@ -53,14 +53,15 @@ audio formats.
 
 ## Quick start
 
-First, since this is bindings to C-interface of the library, you'll need to
-install the library itself. If you're on a Unix-like system, chances are
+First, since these are bindings to the C interface of the library, you'll
+need to install the library itself. If you're on a Unix-like system, chances
+are
 you'll have it in the official repositories of your distro.
 
 ### Reading meta data
 
 Now to the hacking. It's recommended that you define a record representing
-meta-data of audio track in your program, like this:
+meta-data of an audio track in your program, like this:
 
 ```haskell
 module Main (main) where
@@ -88,7 +89,7 @@ data types have smart constructors, but `Title`, `Artist`, `Album`,
 turn on the `OverloadedStrings` language extension to use normal string
 literals to create values of these types.
 
-`Year` and `TrackNumber` may be not set or missing, in this case you get
+`Year` and `TrackNumber` may be unset or missing, in which case you get
 `Nothing`. This is possible with string-based fields too, but in that case
 you just get empty strings. `Year` and `TrackNumber` have smart constructors
 that make sure that the values are positive (i.e. zero is not allowed).
@@ -136,13 +137,13 @@ AudioTrack
 ```
 
 Success! It's also possible to extract audio properties like sample rate,
-etc. but it's not shown here for simplicity, consult Haddocks for more
+etc. but it's not shown here for simplicity; consult the Haddocks for more
 information.
 
 N.B. If you need to extract the duration, TagLib only returns the number of
 seconds as an integer. This means that if you want to calculate the total
 duration of an album, you'll get a slightly incorrect result. The right
-solution is to extract the duration as floating-point number, for that we
+solution is to extract the duration as a floating-point number; for that we
 recommend the bindings to
 `libsndfile`—[`hsndfile`](https://hackage.haskell.org/package/hsndfile) (or
 the above-mentioned `flac` package for Haskell if you work with FLAC).
@@ -177,4 +178,4 @@ Pull requests are also welcome.
 
 Copyright © 2015–present Mark Karpov
 
-Distributed under BSD 3 clause license.
+Distributed under the BSD 3-clause license.
