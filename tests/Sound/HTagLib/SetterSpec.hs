@@ -38,7 +38,7 @@ simpleSetter tags = do
   dupe <- dupeFile path
   setTags dupe Nothing sampleSetter
   extracted <- getTags dupe (sampleGetter dupe)
-  extracted `shouldMatchTags` updateSampleTags (tags {atFileName = dupe})
+  extracted `shouldMatchTags` updateSampleTags (tags{atFileName = dupe})
 
 specializedSetter :: FileType -> AudioTags -> Expectation
 specializedSetter t tags = do
@@ -46,4 +46,4 @@ specializedSetter t tags = do
   dupe <- dupeFile path
   setTags' dupe Nothing t sampleSetter
   extracted <- getTags dupe (sampleGetter dupe)
-  extracted `shouldMatchTags` updateSampleTags (tags {atFileName = dupe})
+  extracted `shouldMatchTags` updateSampleTags (tags{atFileName = dupe})

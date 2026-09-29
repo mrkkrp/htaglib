@@ -112,5 +112,5 @@ shouldMatchTags ::
 shouldMatchTags given expected =
   let zeroBitRate = fromJust (mkBitRate 0)
    in if atBitRate given == zeroBitRate
-        then given `shouldBe` expected {atBitRate = zeroBitRate}
+        then given `shouldBe` expected{atBitRate = zeroBitRate}
         else given `shouldBe` expected

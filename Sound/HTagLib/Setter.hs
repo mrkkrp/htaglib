@@ -121,7 +121,7 @@ execSetter ::
   -- | Setter
   TagSetter ->
   m ()
-execSetter path enc t TagSetter {..} = liftIO . I.withFile path t $ \fid -> do
+execSetter path enc t TagSetter{..} = liftIO . I.withFile path t $ \fid -> do
   forM_ enc I.id3v2SetEncoding
   let writeTag x f = forM_ x (`f` fid)
   writeTag sdTitle I.setTitle
@@ -135,28 +135,28 @@ execSetter path enc t TagSetter {..} = liftIO . I.withFile path t $ \fid -> do
 
 -- | Setter for the track title.
 titleSetter :: Title -> TagSetter
-titleSetter x = mempty {sdTitle = Just x}
+titleSetter x = mempty{sdTitle = Just x}
 
 -- | Setter for the track artist.
 artistSetter :: Artist -> TagSetter
-artistSetter x = mempty {sdArtist = Just x}
+artistSetter x = mempty{sdArtist = Just x}
 
 -- | Setter for the track album.
 albumSetter :: Album -> TagSetter
-albumSetter x = mempty {sdAlbum = Just x}
+albumSetter x = mempty{sdAlbum = Just x}
 
 -- | Setter for the track comment.
 commentSetter :: Comment -> TagSetter
-commentSetter x = mempty {sdComment = Just x}
+commentSetter x = mempty{sdComment = Just x}
 
 -- | Setter for the track genre.
 genreSetter :: Genre -> TagSetter
-genreSetter x = mempty {sdGenre = Just x}
+genreSetter x = mempty{sdGenre = Just x}
 
 -- | Setter for the year tag, use 'Nothing' to clear the field.
 yearSetter :: Maybe Year -> TagSetter
-yearSetter x = mempty {sdYear = Just x}
+yearSetter x = mempty{sdYear = Just x}
 
 -- | Setter for the track number, use 'Nothing' to clear the field.
 trackNumberSetter :: Maybe TrackNumber -> TagSetter
-trackNumberSetter x = mempty {sdTrackNumber = Just x}
+trackNumberSetter x = mempty{sdTrackNumber = Just x}

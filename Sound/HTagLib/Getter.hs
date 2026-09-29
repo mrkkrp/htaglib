@@ -38,7 +38,7 @@ import Sound.HTagLib.Type
 
 -- | A composable entity that can be passed to the 'getTags' or 'getTags''
 -- functions to read multiple meta data fields at once.
-newtype TagGetter a = TagGetter {runGetter :: I.FileId -> IO a}
+newtype TagGetter a = TagGetter{runGetter :: I.FileId -> IO a}
   deriving (Functor)
 
 instance Applicative TagGetter where
